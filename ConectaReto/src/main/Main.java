@@ -6,9 +6,11 @@
 package main;
 
 import controller.DBConnection;
+import controller.ExamController;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 /**
  *
@@ -21,35 +23,34 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        /*
-        // Instancia de DBConnection
-        DBConnection dbConnection = new DBConnection();
-        
-        // Inicializamos los objetos que vamos a utilizar
-        Connection con = null;
-        PreparedStatement stmt = null;
+   
+            ExamController examController = new ExamController();
 
-        try {
-            // Intentamos abrir la conexión
-            con = dbConnection.openConnection();
+            // Prueba de crear una Unidad Didáctica
+            String acronimo = "MATH101";
+            String titulo = "Matemáticas Avanzadas";
+            String evaluacion = "Final";
+            String descripcion = "Unidad sobre cálculo avanzado y álgebra.";
 
-            // Comprobamos si la conexión fue exitosa
-            if (con != null) {
-                System.out.println("Conexión establecida correctamente.");
+            boolean unidadCreada = examController.crearUnidad(acronimo, titulo, evaluacion, descripcion);
+            if (unidadCreada) {
+                System.out.println("Unidad didáctica creada con éxito.");
             } else {
-                System.out.println("Error al establecer la conexión.");
+                System.out.println("Error al crear la unidad didáctica.");
             }
 
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        } finally {
-            try {
-                // Cerramos la conexión al terminar
-                dbConnection.closeConnection(stmt, con);
-            } catch (SQLException e) {
-                System.out.println("Error al intentar cerrar la conexión: " + e.getMessage());
+            // Prueba de crear una Convocatoria
+            String convocatoria = "Junio 2024";
+            String descripcionConvocatoria = "Convocatoria para exámenes finales de junio.";
+            LocalDate fecha = LocalDate.of(2024, 6, 15);
+            String curso = "2023/2024";
+
+            boolean convocatoriaCreada = examController.crearConvocatoria(convocatoria, descripcionConvocatoria, fecha, curso);
+            if (convocatoriaCreada) {
+                System.out.println("Convocatoria creada con éxito.");
+            } else {
+                System.out.println("Error al crear la convocatoria.");
             }
-        }*/
+        }
     }
-    
-}
+
