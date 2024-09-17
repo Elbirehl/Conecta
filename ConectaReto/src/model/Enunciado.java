@@ -5,6 +5,8 @@
  */
 package model;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author 2dam
@@ -15,13 +17,17 @@ public class Enunciado {
     private Dificultad nivel;
     private boolean disponible;
     private String ruta;
+    private ArrayList <UnidadDidactica> unidades;
+    private ArrayList <Convocatoria> convocatorias;
 
-    public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta) {
+    public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias) {
         this.id = id;
         this.descripcion = descripcion;
         this.nivel = nivel;
         this.disponible = disponible;
         this.ruta = ruta;
+        this.unidades = unidades;
+        this.convocatorias = convocatorias;
     }
 
     public int getId() {
@@ -63,5 +69,20 @@ public class Enunciado {
     public void setRuta(String ruta) {
         this.ruta = ruta;
     }
-    
+
+    public ArrayList<UnidadDidactica> getUnidades() {
+        return unidades;
+    }
+
+    public void setUnidades(ArrayList<UnidadDidactica> unidades) {
+        this.unidades = unidades;
+    }
+
+    public ArrayList<Convocatoria> getConvocatorias() {
+        return convocatorias;
+    }
+
+    public void setConvocatorias(ArrayList<Convocatoria> convocatorias) {
+        this.convocatorias = convocatorias;
+    }
 }

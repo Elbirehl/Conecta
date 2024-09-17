@@ -16,12 +16,14 @@ public class Convocatoria {
     private String descripcion;
     private LocalDate fecha;
     private String curso;
+    private Enunciado enunciado;
 
-    public Convocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso) {
+    public Convocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso, Enunciado enunciado) {
         this.convocatoria = convocatoria;
         this.descripcion = descripcion;
         this.fecha = fecha;
         this.curso = curso;
+        this.enunciado = enunciado;
     }
 
     public String getConvocatoria() {
@@ -55,6 +57,13 @@ public class Convocatoria {
     public void setCurso(String curso) {
         this.curso = curso;
     }
-    
+
+    public Enunciado getEnunciado() {
+        return enunciado;
+    }
+
+    public void setEnunciado(Enunciado enunciado) {
+        this.enunciado = enunciado;
+    }
     
 }

@@ -5,10 +5,22 @@
  */
 package controller;
 
+import java.time.LocalDate;
+import model.Convocatoria;
+import model.Enunciado;
+import model.UnidadDidactica;
+
 /**
  *
  * @author 2dam
  */
 public interface ManageExams {
+    public UnidadDidactica crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion);
+    public Convocatoria crearConvocatoria (String convocatoria, String descripcion, LocalDate fecha, String curso);
+    public Enunciado crearEnunciado();
+    public Enunciado consultarEnunciado();
+    public Convocatoria consultarConvocatoria();
+    public Enunciado visualizarDocEnunciado();
+    public Convocatoria asignarEnunciado();
     
 }

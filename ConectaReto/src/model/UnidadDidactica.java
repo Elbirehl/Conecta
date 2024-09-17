@@ -5,6 +5,8 @@
  */
 package model;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author 2dam
@@ -15,13 +17,15 @@ public class UnidadDidactica {
     private String titulo;
     private String evaluacion;
     private String descripcion;
+    private ArrayList <Enunciado> enunciados;
 
-    public UnidadDidactica(int id, String acronimo, String titulo, String evaluacion, String descripcion) {
+    public UnidadDidactica(int id, String acronimo, String titulo, String evaluacion, String descripcion, ArrayList<Enunciado> enunciados) {
         this.id = id;
         this.acronimo = acronimo;
         this.titulo = titulo;
         this.evaluacion = evaluacion;
         this.descripcion = descripcion;
+        this.enunciados = enunciados;
     }
     
     /**
@@ -93,7 +97,12 @@ public class UnidadDidactica {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-    
-    
-    
+
+    public ArrayList<Enunciado> getEnunciados() {
+        return enunciados;
+    }
+
+    public void setEnunciados(ArrayList<Enunciado> enunciados) {
+        this.enunciados = enunciados;
+    }
 }
