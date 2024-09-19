@@ -15,7 +15,7 @@ import model.Enunciado;
  */
 public interface ManageExams {
     public boolean crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion);
-    public boolean crearConvocatoria (String convocatoria, String descripcion, LocalDate fecha, String curso);
+    public boolean crearConvocatoria (String convocatoria, String descripcion, LocalDate fecha, String curso, int enunciadoId);
     public Enunciado crearEnunciado();
     public Enunciado consultarEnunciado();
     public Convocatoria consultarConvocatoria();

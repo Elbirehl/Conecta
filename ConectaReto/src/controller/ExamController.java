@@ -22,7 +22,7 @@ public class ExamController implements ManageExams {
     private PreparedStatement stmt;
     private DBConnection conController = new DBConnection();
     final String CREARUNIDAD = "INSERT INTO UnidadDidactica(acronimo, titulo, evaluacion, descripcion) VALUES (?,?,?,?)";
-    final String CREARCONVOCATORIA ="INSERT INTO ConvocatoriaExamen (convocatoria, descripcion, fecha, curso) VALUES (?,?,?,?)";
+    final String CREARCONVOCATORIA ="INSERT INTO ConvocatoriaExamen (convocatoria, descripcion, fecha, curso, enunciado_id) VALUES (?,?,?,?,?)";
 
     @Override
     public boolean crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion) {
@@ -43,22 +43,12 @@ public class ExamController implements ManageExams {
         } catch (SQLException e) {
             System.out.println("Error de SQL al crear la unidad didáctica.");
             e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                conController.closeConnection(stmt, con);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
-
         return creado;
     }
 
     @Override
-    public boolean crearConvocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso) {
+    public boolean crearConvocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso, int enunciadoId) {
        boolean creado = false;
 
         try {
@@ -68,6 +58,7 @@ public class ExamController implements ManageExams {
             stmt.setString(2, descripcion);
             stmt.setDate(3, java.sql.Date.valueOf(fecha)); 
             stmt.setString(4, curso);
+            stmt.setInt(5, enunciadoId); 
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
