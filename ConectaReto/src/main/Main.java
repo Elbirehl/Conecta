@@ -10,6 +10,8 @@ import controller.ExamController;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import model.UnidadDidactica;
 import utilidades.Util;
 
 /**
@@ -62,42 +64,39 @@ public class Main {
 
             }
         } while (menu != 8);
-        /*
-        // Instancia de DBConnection
-        DBConnection dbConnection = new DBConnection();
-        
-        // Inicializamos los objetos que vamos a utilizar
-        Connection con = null;
-        PreparedStatement stmt = null;
-
-        try {
-            // Intentamos abrir la conexión
-            con = dbConnection.openConnection();
-
-            // Comprobamos si la conexión fue exitosa
-            if (con != null) {
-                System.out.println("Conexión establecida correctamente.");
-            } else {
-                System.out.println("Error al establecer la conexión.");
-            }
-
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        } finally {
-            try {
-                // Cerramos la conexión al terminar
-                dbConnection.closeConnection(stmt, con);
-            } catch (SQLException e) {
-                System.out.println("Error al intentar cerrar la conexión: " + e.getMessage());
-            }
-        }*/
     }
 
     private static void ConsultarEnunciado(ExamController controlador) {
         int id;
-        System.out.println("Introduce el ID de la unidad didáctica: ");
-        id = Util.leerInt();
-        controlador.consultarEnunciado(id);
+        int cant = 1;
+        ArrayList<String> enunciados;
+        ArrayList<UnidadDidactica> unidadesDidacticas;
+        unidadesDidacticas = controlador.mostrarUnidadesDidacticas();
+        if (unidadesDidacticas.isEmpty()) {
+            System.out.println("Error. No hay unidades domesticas");
+        } else {
+            System.out.println("\t\tUNIDADES DIDÁCTICAS:");
+            for (UnidadDidactica ud : unidadesDidacticas) {
+                System.out.println("ID: " + ud.getId()
+                        + "\nACRÓNIMO: " + ud.getAcronimo()
+                        + "\nTÍTULO: " + ud.getTitulo()
+                        + "\nEVALUACION: " + ud.getEvaluacion()
+                        + "\nDESCRIPCIÓN: " + ud.getDescripcion()
+                );
+            }
+            System.out.println("Introduce el ID de la unidad didáctica: ");
+            id = Util.leerInt();
+            enunciados = controlador.consultarEnunciado(id);
+            if (enunciados.isEmpty()) {
+                System.err.println("Esta unidad didactica no cuenta con enunciados actualmente.");
+            } else {
+                System.out.println("Los enunciados que usan temas de la unidad didáctica " + id + " son:");
+                for (String e : enunciados) {
+                    System.out.println("\t" + cant + ". " + e);
+                    cant++;
+                }
+            }
+        }
 
     }
 

@@ -12,12 +12,13 @@ import java.util.ArrayList;
  * @author 2dam
  */
 public class UnidadDidactica {
+
     private int id;
     private String acronimo;
     private String titulo;
     private String evaluacion;
     private String descripcion;
-    private ArrayList <Enunciado> enunciados;
+    private ArrayList<Enunciado> enunciados;
 
     public UnidadDidactica(int id, String acronimo, String titulo, String evaluacion, String descripcion, ArrayList<Enunciado> enunciados) {
         this.id = id;
@@ -27,7 +28,10 @@ public class UnidadDidactica {
         this.descripcion = descripcion;
         this.enunciados = enunciados;
     }
-    
+
+    public UnidadDidactica() {
+    }
+
     /**
      * @return the id
      */
