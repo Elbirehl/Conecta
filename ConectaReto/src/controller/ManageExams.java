@@ -6,6 +6,7 @@
 package controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import model.Convocatoria;
 import model.Enunciado;
 
@@ -18,7 +19,7 @@ public interface ManageExams {
     public boolean crearConvocatoria (String convocatoria, String descripcion, LocalDate fecha, String curso, int enunciadoId);
     public Enunciado crearEnunciado();
     public Enunciado consultarEnunciado();
-    public Convocatoria consultarConvocatoria();
+    public ArrayList<Convocatoria> consultarConvocatoria(int enunciadoId);
     public Enunciado visualizarDocEnunciado();
     public Convocatoria asignarEnunciado();
     

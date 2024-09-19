@@ -7,6 +7,8 @@ package main;
 
 import controller.ExamController;
 import java.time.LocalDate;
+import java.util.List;
+import model.Convocatoria;
 
 /**
  *
@@ -22,32 +24,46 @@ public class Main {
 
         ExamController examController = new ExamController();
 
-        // Prueba de crear una Unidad Didáctica
-        String acronimo = "MATH101";
-        String titulo = "Matemáticas Avanzadas";
-        String evaluacion = "Final";
-        String descripcion = "Unidad sobre cálculo avanzado y álgebra.";
+//        // Prueba de crear una Unidad Didáctica
+//        String acronimo = "MATH101";
+//        String titulo = "Matemáticas Avanzadas";
+//        String evaluacion = "Final";
+//        String descripcion = "Unidad sobre cálculo avanzado y álgebra.";
+//
+//        boolean unidadCreada = examController.crearUnidad(acronimo, titulo, evaluacion, descripcion);
+//        if (unidadCreada) {
+//            System.out.println("Unidad didáctica creada con éxito.");
+//        } else {
+//            System.out.println("Error al crear la unidad didáctica.");
+//        }
+//
+//        // Prueba de crear una Convocatoria
+//        String convocatoria = "Junio 2024";
+//        String descripcionConvocatoria = "Convocatoria para exámenes finales de junio.";
+//        LocalDate fecha = LocalDate.of(2024, 6, 15);
+//        String curso = "2023/2024";
+//
+//        int enunciadoId = 1;  // O el ID del enunciado que deseas asociar con la convocatoria
+//        boolean convocatoriaCreada = examController.crearConvocatoria(convocatoria, descripcionConvocatoria, fecha, curso, enunciadoId);
+//
+//        if (convocatoriaCreada) {
+//            System.out.println("Convocatoria creada con éxito.");
+//        } else {
+//            System.out.println("Error al crear la convocatoria.");
+//        }
+ // ID del enunciado que quieres consultar
+            int enunciadoId = 1; // Cambia este ID según tus datos
 
-        boolean unidadCreada = examController.crearUnidad(acronimo, titulo, evaluacion, descripcion);
-        if (unidadCreada) {
-            System.out.println("Unidad didáctica creada con éxito.");
-        } else {
-            System.out.println("Error al crear la unidad didáctica.");
-        }
+            // Consulta las convocatorias asociadas al enunciado
+            List<Convocatoria> convocatorias = examController.consultarConvocatoria(enunciadoId);
 
-        // Prueba de crear una Convocatoria
-        String convocatoria = "Junio 2024";
-        String descripcionConvocatoria = "Convocatoria para exámenes finales de junio.";
-        LocalDate fecha = LocalDate.of(2024, 6, 15);
-        String curso = "2023/2024";
-
-        int enunciadoId = 1;  // O el ID del enunciado que deseas asociar con la convocatoria
-        boolean convocatoriaCreada = examController.crearConvocatoria(convocatoria, descripcionConvocatoria, fecha, curso, enunciadoId);
-
-        if (convocatoriaCreada) {
-            System.out.println("Convocatoria creada con éxito.");
-        } else {
-            System.out.println("Error al crear la convocatoria.");
-        }
+            // Imprime los resultados
+            for (Convocatoria convocatoria : convocatorias) {
+                System.out.println("Convocatoria: " + convocatoria.getConvocatoria());
+                System.out.println("Descripción: " + convocatoria.getDescripcion());
+                System.out.println("Fecha: " + convocatoria.getFecha());
+                System.out.println("Curso: " + convocatoria.getCurso());
+                System.out.println("-----");
+            }
     }
 }
