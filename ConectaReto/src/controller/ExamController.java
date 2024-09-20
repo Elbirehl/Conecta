@@ -55,7 +55,7 @@ public class ExamController implements ManageExams {
             System.out.println("¿Está disponible? Si/No");
             disponibleS=Util.introducirCadena();
 	}
-	if(Util.introducirCadena().equalsIgnoreCase("si")) {
+	if(disponibleS.equalsIgnoreCase("si")) {
             disponible=true;
 	}
         // Selección de Unidades Didácticas

@@ -22,7 +22,7 @@ public class DBConnection {
 		// TODO Auto-generated method stub
 		Connection con = null;
 		try {
-			String url = "jdbc:mysql://localhost:3306/conecta?serverTimezone=Europe/Madrid&useSSL=false";
+			String url = "jdbc:mysql://localhost:3306/examendb?serverTimezone=Europe/Madrid&useSSL=false";
 			con = DriverManager.getConnection(url, "root", "abcd*1234");
 		} catch (SQLException e) {
 			System.out.println("Error al intentar abrir la BD");
@@ -44,6 +44,13 @@ public class DBConnection {
 	}
 
     Connection getConnection() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+            try {
+                String url = "jdbc:mysql://localhost:3306/examendb?serverTimezone=Europe/Madrid&useSSL=false";
+                con = DriverManager.getConnection(url, "root", "abcd*1234");
+            } catch (SQLException e) {
+                System.out.println("Error al intentar abrir la BD: " + e.getMessage());
+            }
+            return con;    
     }
 }
