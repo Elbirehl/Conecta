@@ -12,6 +12,8 @@ import java.time.LocalDate;
  * @author 2dam
  */
 public class Convocatoria {
+
+    
     private String convocatoria;
     private String descripcion;
     private LocalDate fecha;
@@ -65,5 +67,12 @@ public class Convocatoria {
     public void setEnunciado(Enunciado enunciado) {
         this.enunciado = enunciado;
     }
+
+    public Object getEnunciados() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+  
+    
     
 }

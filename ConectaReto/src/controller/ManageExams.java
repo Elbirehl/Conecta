@@ -5,7 +5,9 @@
  */
 package controller;
 
+import java.sql.Connection;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import model.Convocatoria;
 import model.Enunciado;
 import model.UnidadDidactica;
@@ -19,8 +21,8 @@ public interface ManageExams {
     public Convocatoria crearConvocatoria (String convocatoria, String descripcion, LocalDate fecha, String curso);
     public Enunciado crearEnunciado();
     public Enunciado consultarEnunciado();
-    public Convocatoria consultarConvocatoria();
+    public ArrayList<Convocatoria> consultarConvocatoria( int enunciadoId);
     public Enunciado visualizarDocEnunciado();
-    public Convocatoria asignarEnunciado();
+    public Convocatoria asignarEnunciado((int convocatoriaId, int enunciadoId);
     
 }
