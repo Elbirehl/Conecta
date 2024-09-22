@@ -7,6 +7,9 @@ package main;
 
 import controller.DBConnection;
 import controller.ExamController;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -53,7 +56,7 @@ public class Main {
                     controlador.consultarConvocatoria();
                     break;
                 case 6:
-                    controlador.visualizarDocEnunciado();
+                    cvisualizarDocEnunciado(controlador);
                     break;
                 case 7:
                     controlador.asignarEnunciado();
@@ -69,12 +72,13 @@ public class Main {
     private static void ConsultarEnunciado(ExamController controlador) {
         int id;
         int cant = 1;
+        int cantUnidadesDidacticas = controlador.consultarCantidadUnidadesDidacticas();
         ArrayList<String> enunciados;
         ArrayList<UnidadDidactica> unidadesDidacticas;
-        unidadesDidacticas = controlador.mostrarUnidadesDidacticas();
-        if (unidadesDidacticas.isEmpty()) {
-            System.out.println("Error. No hay unidades domesticas");
+        if (cantUnidadesDidacticas == 0) {
+            System.out.println("Actualmente no hay unidades didacticas");
         } else {
+            unidadesDidacticas = controlador.mostrarUnidadesDidacticas();
             System.out.println("\t\tUNIDADES DIDÁCTICAS:");
             for (UnidadDidactica ud : unidadesDidacticas) {
                 System.out.println("ID: " + ud.getId()
@@ -85,10 +89,10 @@ public class Main {
                 );
             }
             System.out.println("Introduce el ID de la unidad didáctica: ");
-            id = Util.leerInt();
+            id = Util.leerInt(1, cantUnidadesDidacticas);
             enunciados = controlador.consultarEnunciado(id);
             if (enunciados.isEmpty()) {
-                System.err.println("Esta unidad didactica no cuenta con enunciados actualmente.");
+                System.out.println("Esta unidad didactica no cuenta con enunciados actualmente.\n");
             } else {
                 System.out.println("Los enunciados que usan temas de la unidad didáctica " + id + " son:");
                 for (String e : enunciados) {
@@ -100,4 +104,33 @@ public class Main {
 
     }
 
+    private static void cvisualizarDocEnunciado(ExamController controlador) {
+        String filePath = "C:\\Users\\User\\Downloads\\EXAMEN SISTEMAS UD6.docx";
+
+        // Crear un objeto File con la ruta del archivo
+        File file = new File(filePath);
+
+        // Verificar si el archivo existe
+        if (!file.exists()) {
+            System.out.println("El archivo no existe en la ruta especificada.");
+            return;
+        }
+
+        // Verificar si el entorno permite abrir el archivo
+        if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                // Comprobar si la operación de abrir está soportada
+                if (desktop.isSupported(Desktop.Action.OPEN)) {
+                    desktop.open(file); // Abre el archivo
+                } else {
+                    System.out.println("La acción de abrir no está soportada en este entorno.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("La clase Desktop no es soportada en este entorno.");
+        }
+    }
 }

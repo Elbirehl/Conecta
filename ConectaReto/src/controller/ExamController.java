@@ -28,6 +28,8 @@ public class ExamController implements ManageExams {
     final String CONSUTARENUNCIADOCONUDESPECIFICA = "SELECT descripcion FROM ENUNCIADO WHERE Id IN (SELECT ENUNCIADO_ID FROM UD_ENUNCIADO WHERE UD_ID = ?)";
     //Para mostrar todas las unidades didácticas att:Meylin
     final String MOSTRARUNIDADESDIDACTICAS = "SELECT * FROM UnidadDidactica";
+    //Saber si hay unidades didacticas y cuantas att:Meylin
+    final String CONSULTARCANTIDADUNIDADESDIDACTICAS = "SELECT MAX(id) FROM UnidadDidactica";
 
     @Override
     public UnidadDidactica crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion) {
@@ -114,5 +116,30 @@ public class ExamController implements ManageExams {
             e.printStackTrace();
         }
         return unidadesDidacticas;
+    }
+
+    public int consultarCantidadUnidadesDidacticas() {
+        int cantidad = 0;
+        con = conController.openConnection();
+        try {
+            PreparedStatement stmt = con.prepareStatement(CONSULTARCANTIDADUNIDADESDIDACTICAS);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                cantidad = rs.getInt(1);
+                if (rs.wasNull()) {
+                    cantidad = 0;
+                }
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Error al obtener las unidades didácticas: " + e.getMessage());
+        }
+        try {
+            conController.closeConnection(stmt, con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cantidad;
     }
 }
