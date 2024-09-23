@@ -30,6 +30,10 @@ public class ExamController implements ManageExams {
     final String MOSTRARUNIDADESDIDACTICAS = "SELECT * FROM UnidadDidactica";
     //Saber si hay unidades didacticas y cuantas att:Meylin
     final String CONSULTARCANTIDADUNIDADESDIDACTICAS = "SELECT MAX(id) FROM UnidadDidactica";
+    //Mostrar todas las descripciones de los enunciados att:Meylin
+    final String MOSTRARTODOSLOSENUNCIADOS = "SELECT id,descripcion,ruta FROM Enunciado;";
+    //Saber si hay enunciados y cuantos att:Meylin
+    final String CONSULTARCANTIDADENUNCIADOS = "SELECT MAX(id) FROM Enunciado";
 
     @Override
     public UnidadDidactica crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion) {
@@ -79,8 +83,31 @@ public class ExamController implements ManageExams {
     }
 
     @Override
-    public Enunciado visualizarDocEnunciado() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<Enunciado> visualizarDocEnunciado() {
+        ArrayList<Enunciado> enunciados = new ArrayList();
+        Enunciado enunciado;
+        con = conController.openConnection();
+        try {
+            stmt = con.prepareStatement(MOSTRARTODOSLOSENUNCIADOS);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                enunciado = new Enunciado();
+                enunciado.setId(rs.getInt("id"));
+                enunciado.setDescripcion(rs.getString("descripcion"));
+                enunciado.setRuta(rs.getString("ruta"));
+                enunciados.add(enunciado);
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Error al obtener los Enunciados: " + e.getMessage());
+        }
+        try {
+            conController.closeConnection(stmt, con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return enunciados;
     }
 
     @Override
@@ -93,7 +120,7 @@ public class ExamController implements ManageExams {
         UnidadDidactica ud = null;
         con = conController.openConnection();
         try {
-            PreparedStatement stmt = con.prepareStatement(MOSTRARUNIDADESDIDACTICAS);
+            stmt = con.prepareStatement(MOSTRARUNIDADESDIDACTICAS);
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -122,7 +149,7 @@ public class ExamController implements ManageExams {
         int cantidad = 0;
         con = conController.openConnection();
         try {
-            PreparedStatement stmt = con.prepareStatement(CONSULTARCANTIDADUNIDADESDIDACTICAS);
+            stmt = con.prepareStatement(CONSULTARCANTIDADUNIDADESDIDACTICAS);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 cantidad = rs.getInt(1);
@@ -134,6 +161,31 @@ public class ExamController implements ManageExams {
             stmt.close();
         } catch (SQLException e) {
             System.out.println("Error al obtener las unidades didácticas: " + e.getMessage());
+        }
+        try {
+            conController.closeConnection(stmt, con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cantidad;
+    }
+
+    public int consultarCantidadEnunciados() {
+        int cantidad = 0;
+        con = conController.openConnection();
+        try {
+            stmt = con.prepareStatement(CONSULTARCANTIDADENUNCIADOS);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                cantidad = rs.getInt(1);
+                if (rs.wasNull()) {
+                    cantidad = 0;
+                }
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Error al obtener los enunciados " + e.getMessage());
         }
         try {
             conController.closeConnection(stmt, con);

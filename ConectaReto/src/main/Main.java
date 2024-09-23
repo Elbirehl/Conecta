@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import model.Enunciado;
 import model.UnidadDidactica;
 import utilidades.Util;
 
@@ -105,32 +106,48 @@ public class Main {
     }
 
     private static void cvisualizarDocEnunciado(ExamController controlador) {
-        String filePath = "C:\\Users\\User\\Downloads\\EXAMEN SISTEMAS UD6.docx";
-
-        // Crear un objeto File con la ruta del archivo
-        File file = new File(filePath);
-
-        // Verificar si el archivo existe
-        if (!file.exists()) {
-            System.out.println("El archivo no existe en la ruta especificada.");
-            return;
-        }
-
-        // Verificar si el entorno permite abrir el archivo
-        if (Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
-            try {
-                // Comprobar si la operación de abrir está soportada
-                if (desktop.isSupported(Desktop.Action.OPEN)) {
-                    desktop.open(file); // Abre el archivo
-                } else {
-                    System.out.println("La acción de abrir no está soportada en este entorno.");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        int id;
+        boolean encontrado = false;
+        String filePath;
+        ArrayList<Enunciado> enunciados;
+        int cantidadEnunciados = controlador.consultarCantidadUnidadesDidacticas();
+        if (cantidadEnunciados == 0) {
+            System.out.println("Actualmente no hay unidades didacticas");
         } else {
-            System.out.println("La clase Desktop no es soportada en este entorno.");
+            enunciados = controlador.visualizarDocEnunciado();
+            System.out.println("\t\tENUNCIADOS:");
+            for (Enunciado enunciado : enunciados) {
+                System.out.println("ID: " + enunciado.getId()
+                        + "\nDESCRIPCION: " + enunciado.getDescripcion());
+            }
+            System.out.println("\nIntroduce el ID del enunciado que desea visualizar: ");
+            id = Util.leerInt(1, cantidadEnunciados);
+            for (int i = 0; i < enunciados.size() && !encontrado; i++) {
+                if (enunciados.get(i).getId() == id) {
+                    encontrado = true;
+                    String directorioTrabajo = System.getProperty("user.dir");
+                    filePath = enunciados.get(i).getRuta();
+                    File file = new File(directorioTrabajo + "\\" + filePath);
+                    if (!file.exists()) {
+                        System.out.println("El archivo no existe en la ruta especificada.");
+                    }
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop desktop = Desktop.getDesktop();
+                        try {
+                            // Comprobar si la operación de abrir está soportada
+                            if (desktop.isSupported(Desktop.Action.OPEN)) {
+                                desktop.open(file); // Abre el archivo
+                            } else {
+                                System.out.println("La acción de abrir no está soportada en este entorno.");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        System.out.println("La clase Desktop no es soportada en este entorno.");
+                    }
+                }
+            }
         }
     }
 }

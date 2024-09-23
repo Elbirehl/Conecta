@@ -27,7 +27,7 @@ public interface ManageExams {
 
     public Convocatoria consultarConvocatoria();
 
-    public Enunciado visualizarDocEnunciado();
+    public ArrayList<Enunciado> visualizarDocEnunciado();
 
     public Convocatoria asignarEnunciado();
 
