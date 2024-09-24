@@ -166,7 +166,7 @@ public class Main {
 
         // Comprobar que la unidad didáctica no se repita
         while (controlador.existeUnidadDidactica(acronimo)) {
-            System.out.println("Ya existe una unidad didáctica con el acrónimo '" + acronimo + "'. Intenta con otro.");
+            System.out.println("Ya existe una unidad didáctica con el acrónimo '" + acronimo + "'. Intenta con otro:");
             acronimo = Util.introducirCadena();
         }
 
@@ -179,11 +179,18 @@ public class Main {
 
         System.out.println("Introduce la evaluación de la unidad didáctica (Primera, segunda o tercera evaluación):");
         String evaluacion = Util.introducirCadena();
-        while (evaluacion.isEmpty()) {
-            System.out.println("La evaluación no puede estar vacía.");
+        // Validar que la evaluación no esté vacía y sea una de las opciones válidas
+        while (evaluacion.isEmpty() || (!evaluacion.equalsIgnoreCase("Primera")
+                && !evaluacion.equalsIgnoreCase("Segunda")
+                && !evaluacion.equalsIgnoreCase("Tercera"))) {
+            if (evaluacion.isEmpty()) {
+                System.out.println("La evaluación no puede estar vacía.");
+            } else {
+                System.out.println("La evaluación debe ser 'Primera', 'Segunda' o 'Tercera'. Inténtalo de nuevo:");
+            }
             evaluacion = Util.introducirCadena();
         }
-
+        
         System.out.println("Introduce una descripción para la unidad didáctica:");
         String descripcion = Util.introducirCadena();
         while (descripcion.isEmpty()) {
