@@ -24,11 +24,11 @@ public class ExamController implements ManageExams {
     private Connection con;
     private PreparedStatement stmt;
     private DBConnection conController = new DBConnection();
-  
+
     final String CREARUNIDAD = "INSERT INTO UnidadDidactica(acronimo, titulo, evaluacion, descripcion) VALUES (?,?,?,?)";
     final String CREARCONVOCATORIA = "INSERT INTO ConvocatoriaExamen (convocatoria, descripcion, fecha, curso, enunciado_id) VALUES (?,?,?,?,?)";
     final String CONSULTARCONVOCATORIA = "SELECT * FROM ConvocatoriaExamen WHERE enunciado_id = ?";
- //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
+    //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
     final String CONSUTARENUNCIADOCONUDESPECIFICA = "SELECT descripcion FROM ENUNCIADO WHERE Id IN (SELECT ENUNCIADO_ID FROM UD_ENUNCIADO WHERE UD_ID = ?)";
     //Para mostrar todas las unidades didácticas att:Meylin
     final String MOSTRARUNIDADESDIDACTICAS = "SELECT * FROM UnidadDidactica";
@@ -38,7 +38,7 @@ public class ExamController implements ManageExams {
     final String MOSTRARTODOSLOSENUNCIADOS = "SELECT id,descripcion,ruta FROM Enunciado;";
     //Saber si hay enunciados y cuantos att:Meylin
     final String CONSULTARCANTIDADENUNCIADOS = "SELECT MAX(id) FROM Enunciado";
-  
+
     @Override
     public boolean crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion) {
         boolean creado = false;
@@ -58,7 +58,7 @@ public class ExamController implements ManageExams {
         } catch (SQLException e) {
             System.out.println("Error de SQL al crear la unidad didáctica.");
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (stmt != null) {
                     stmt.close();
@@ -254,4 +254,3 @@ public class ExamController implements ManageExams {
         return cantidad;
     }
 }
-

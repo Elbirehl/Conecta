@@ -5,10 +5,12 @@
  */
 package controller;
 
+import static com.mysql.cj.conf.PropertyKey.logger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 /**
  *
@@ -26,8 +28,9 @@ public class DBConnection {
             String url = "jdbc:mysql://localhost:3306/examendb?serverTimezone=Europe/Madrid&useSSL=false";
             con = DriverManager.getConnection(url, "root", "abcd*1234");
         } catch (SQLException e) {
+            //Logger.getLogger("DBConnection").severe(e.getLocalizedMessage());
             System.out.println("Error al intentar abrir la BD: " + e.getMessage());
-            e.printStackTrace();  // Esto imprimirá el stack trace completo
+            System.exit(1);
         }
         return con;
     }

@@ -5,15 +5,10 @@
  */
 package main;
 
-
-import controller.DBConnection;
 import controller.ExamController;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import model.Enunciado;
 import model.UnidadDidactica;

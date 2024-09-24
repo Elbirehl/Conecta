@@ -18,7 +18,7 @@ public interface ManageExams {
 
     public boolean crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion);
 
-    public boolean crearConvocatoria (String convocatoria, String descripcion, LocalDate fecha, String curso, int enunciadoId);
+    public boolean crearConvocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso, int enunciadoId);
 
     public Enunciado crearEnunciado();
 

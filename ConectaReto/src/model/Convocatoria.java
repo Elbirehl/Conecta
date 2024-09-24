@@ -12,6 +12,7 @@ import java.time.LocalDate;
  * @author 2dam
  */
 public class Convocatoria {
+
     private String convocatoria;
     private String descripcion;
     private LocalDate fecha;
@@ -65,5 +66,5 @@ public class Convocatoria {
     public void setEnunciado(Enunciado enunciado) {
         this.enunciado = enunciado;
     }
-    
+
 }
