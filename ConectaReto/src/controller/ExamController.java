@@ -25,13 +25,15 @@ public class ExamController implements ManageExams {
 
     private Connection con;
     private PreparedStatement stmt;
-    private DBConnection conController = new DBConnection();
+    private ResultSet rs;
+    private final DBConnection conController = new DBConnection();
 
     //IRATI
     final String CREARUNIDAD = "INSERT INTO UnidadDidactica(acronimo, titulo, evaluacion, descripcion) VALUES (?,?,?,?)";
     //IRATI
     final String CREARCONVOCATORIA = "INSERT INTO ConvocatoriaExamen (convocatoria, descripcion, fecha, curso, enunciado_id) VALUES (?,?,?,?,?)";
     //OLAIA
+    final String ASIGNARENUNCIADOACONVOCATORIA = "UPDATE ConvocatoriaExamen SET enunciado_id = ? WHERE convocatoria=?";
     final String CONSULTARCONVOCATORIA = "SELECT * FROM ConvocatoriaExamen WHERE enunciado_id = ?";
     //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
     final String CONSUTARENUNCIADOCONUDESPECIFICA = "SELECT descripcion FROM ENUNCIADO WHERE Id IN (SELECT ENUNCIADO_ID FROM UD_ENUNCIADO WHERE UD_ID = ?)";
@@ -62,7 +64,7 @@ public class ExamController implements ManageExams {
             }
         } catch (SQLException e) {
             System.out.println("Error de SQL al crear la unidad didáctica.");
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } finally {
             try {
                 if (stmt != null) {
@@ -70,7 +72,7 @@ public class ExamController implements ManageExams {
                 }
                 conController.closeConnection(stmt, con);
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
         return creado;
@@ -95,7 +97,7 @@ public class ExamController implements ManageExams {
             }
         } catch (SQLException e) {
             System.out.println("Error de SQL al crear la convocatoria de examen");
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } finally {
             try {
                 if (stmt != null) {
@@ -103,7 +105,7 @@ public class ExamController implements ManageExams {
                 }
                 conController.closeConnection(stmt, con);
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
         return creado;
@@ -128,7 +130,7 @@ public class ExamController implements ManageExams {
 
             // Obtener el ID del enunciado insertado
             // 2. Obtener el ID del enunciado recién insertado
-            ResultSet rs = ps.getGeneratedKeys();
+            rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 int enunciadoId = rs.getInt(1);
 
@@ -157,8 +159,7 @@ public class ExamController implements ManageExams {
                 enunciado = new Enunciado(desc, dificultad, disponible, ruta, unidades, convocatorias);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            e.printStackTrace();// Imprimir errores de SQL en caso de excepción
+            System.out.println(e.getMessage());
         }
         return enunciado;
     }
@@ -166,7 +167,7 @@ public class ExamController implements ManageExams {
     @Override
     public ArrayList<String> consultarEnunciado(int id) {
         ArrayList<String> enunciado = new ArrayList();
-        ResultSet rs;
+
         con = conController.openConnection();
         try {
             stmt = con.prepareStatement(CONSUTARENUNCIADOCONUDESPECIFICA);
@@ -179,18 +180,17 @@ public class ExamController implements ManageExams {
             stmt.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-        try {
-            conController.closeConnection(stmt, con);
-        } catch (SQLException e) {
-            System.out.println("Error en el cierre de la Base de Datos");
-            e.printStackTrace();
-        }
+        conController.closeConnection(stmt, con);
         return enunciado;
     }
 
     //OLAIA
+    /**
+     *
+     * @return
+     */
     @Override
     public Convocatoria consultarConvocatoria() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -200,10 +200,11 @@ public class ExamController implements ManageExams {
     public ArrayList<Enunciado> visualizarDocEnunciado() {
         ArrayList<Enunciado> enunciados = new ArrayList();
         Enunciado enunciado;
+
         con = conController.openConnection();
         try {
             stmt = con.prepareStatement(MOSTRARTODOSLOSENUNCIADOS);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             while (rs.next()) {
                 enunciado = new Enunciado();
                 enunciado.setId(rs.getInt("id"));
@@ -216,18 +217,18 @@ public class ExamController implements ManageExams {
         } catch (SQLException e) {
             System.out.println("Error al obtener los Enunciados: " + e.getMessage());
         }
-        try {
-            conController.closeConnection(stmt, con);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        conController.closeConnection(stmt, con);
         return enunciados;
     }
 
     //OLAIA
+    /**
+     *
+     * @return
+     */
     @Override
     public Convocatoria asignarEnunciado() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 
     //METODOS EXTRA DE ELBIRE
@@ -241,7 +242,7 @@ public class ExamController implements ManageExams {
             // 1. Obtener lista de Unidades Didácticas
             String query = "SELECT id, acronimo FROM UnidadDidactica";
             PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
 
             // 2. Mostrar la lista de Unidades Didácticas disponibles
             System.out.println("Lista de Unidades Didácticas:");
@@ -274,7 +275,7 @@ public class ExamController implements ManageExams {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace(); // Manejar errores de SQL
+            System.out.println(e.getMessage());
         }
         return unidadSeleccionada;
     }
@@ -289,7 +290,7 @@ public class ExamController implements ManageExams {
             // 1. Consultar la lista de Convocatorias
             String query = "SELECT convocatoria FROM ConvocatoriaExamen";
             PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
 
             ArrayList<String> convocatorias = new ArrayList<>();
             System.out.println("Lista de Convocatorias:");
@@ -335,8 +336,7 @@ public class ExamController implements ManageExams {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            e.printStackTrace(); // Manejar errores de SQL
+            System.out.println(e.getMessage()); // Manejar errores de SQL
         }
         return convocatoriaSeleccionada;
     }
@@ -344,12 +344,12 @@ public class ExamController implements ManageExams {
     //METODOS EXTRA MEYLIN
     public ArrayList<UnidadDidactica> mostrarUnidadesDidacticas() {
         ArrayList<UnidadDidactica> unidadesDidacticas = new ArrayList();
-        UnidadDidactica ud = null;
+        UnidadDidactica ud;
         con = conController.openConnection();
         try {
             stmt = con.prepareStatement(MOSTRARUNIDADESDIDACTICAS);
 
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             while (rs.next()) {
                 ud = new UnidadDidactica();
                 ud.setId(rs.getInt("id"));
@@ -364,11 +364,7 @@ public class ExamController implements ManageExams {
         } catch (SQLException e) {
             System.out.println("Error al obtener las unidades didácticas: " + e.getMessage());
         }
-        try {
-            conController.closeConnection(stmt, con);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        conController.closeConnection(stmt, con);
         return unidadesDidacticas;
     }
 
@@ -377,7 +373,7 @@ public class ExamController implements ManageExams {
         con = conController.openConnection();
         try {
             stmt = con.prepareStatement(CONSULTARCANTIDADUNIDADESDIDACTICAS);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if (rs.next()) {
                 cantidad = rs.getInt(1);
                 if (rs.wasNull()) {
@@ -389,11 +385,7 @@ public class ExamController implements ManageExams {
         } catch (SQLException e) {
             System.out.println("Error al obtener las unidades didácticas: " + e.getMessage());
         }
-        try {
-            conController.closeConnection(stmt, con);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        conController.closeConnection(stmt, con);
         return cantidad;
     }
 
@@ -402,7 +394,7 @@ public class ExamController implements ManageExams {
         con = conController.openConnection();
         try {
             stmt = con.prepareStatement(CONSULTARCANTIDADENUNCIADOS);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if (rs.next()) {
                 cantidad = rs.getInt(1);
                 if (rs.wasNull()) {
@@ -414,11 +406,7 @@ public class ExamController implements ManageExams {
         } catch (SQLException e) {
             System.out.println("Error al obtener los enunciados " + e.getMessage());
         }
-        try {
-            conController.closeConnection(stmt, con);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        conController.closeConnection(stmt, con);
         return cantidad;
     }
 }

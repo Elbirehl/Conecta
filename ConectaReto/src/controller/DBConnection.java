@@ -5,11 +5,11 @@
  */
 package controller;
 
-import static com.mysql.cj.conf.PropertyKey.logger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -20,6 +20,8 @@ public class DBConnection {
 
     /**
      * Abre una conexion con la base de datos.
+     *
+     * @return
      */
     public Connection openConnection() {
         // TODO Auto-generated method stub
@@ -38,25 +40,30 @@ public class DBConnection {
     /**
      * Cierra la conexion con la base de datos.
      *
-     * @throws SQLException si ocurre un error al cerrar la conexión
+     * @param stmt
+     * @param con
      */
-	public void closeConnection(PreparedStatement stmt, Connection con) throws SQLException {
-		System.out.println("Conexion cerrada");
-		if (stmt != null)
-			stmt.close();
-		if (con != null)
-			con.close();
-		System.out.println("--------------------");
-	}
+    public void closeConnection(PreparedStatement stmt, Connection con) {
+        try {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     Connection getConnection() {
         Connection con = null;
-            try {
-                String url = "jdbc:mysql://localhost:3306/examendb?serverTimezone=Europe/Madrid&useSSL=false";
-                con = DriverManager.getConnection(url, "root", "abcd*1234");
-            } catch (SQLException e) {
-                System.out.println("Error al intentar abrir la BD: " + e.getMessage());
-            }
-            return con;    
+        try {
+            String url = "jdbc:mysql://localhost:3306/examendb?serverTimezone=Europe/Madrid&useSSL=false";
+            con = DriverManager.getConnection(url, "root", "abcd*1234");
+        } catch (SQLException e) {
+            System.out.println("Error al intentar abrir la BD: " + e.getMessage());
+        }
+        return con;
     }
 }

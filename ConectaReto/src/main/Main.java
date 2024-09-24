@@ -57,7 +57,7 @@ public class Main {
                     cvisualizarDocEnunciado(controlador);
                     break;
                 case 7:
-                    controlador.asignarEnunciado();
+                    asignarEnunciado(controlador);
                     break;
                 case 8:
                     System.out.println("Gracias por usar nuestro programa.\nSaliendo...");
@@ -71,8 +71,8 @@ public class Main {
 
         Boolean disponible = false;
         Boolean terminado = false;
-        ArrayList<UnidadDidactica> unidades = new ArrayList<UnidadDidactica>();
-        ArrayList<Convocatoria> convocatorias = new ArrayList<Convocatoria>();
+        ArrayList<UnidadDidactica> unidades = new ArrayList<>();
+        ArrayList<Convocatoria> convocatorias = new ArrayList<>();
 
         // Solicita al usuario la descripción del enunciado
         System.out.println("*********Enunciado*********");
@@ -157,14 +157,15 @@ public class Main {
         } else {
             unidadesDidacticas = controlador.mostrarUnidadesDidacticas();
             System.out.println("\t\tUNIDADES DIDÁCTICAS:");
-            for (UnidadDidactica ud : unidadesDidacticas) {
+            //for (UnidadDidactica ud : unidadesDidacticas
+            unidadesDidacticas.forEach((ud) -> {
                 System.out.println("ID: " + ud.getId()
                         + "\nACRÓNIMO: " + ud.getAcronimo()
                         + "\nTÍTULO: " + ud.getTitulo()
                         + "\nEVALUACION: " + ud.getEvaluacion()
                         + "\nDESCRIPCIÓN: " + ud.getDescripcion()
                 );
-            }
+            });
             System.out.println("Introduce el ID de la unidad didáctica: ");
             id = Util.leerInt(1, cantUnidadesDidacticas);
             enunciados = controlador.consultarEnunciado(id);
@@ -192,10 +193,11 @@ public class Main {
         } else {
             enunciados = controlador.visualizarDocEnunciado();
             System.out.println("\t\tENUNCIADOS:");
-            for (Enunciado enunciado : enunciados) {
+            //for (Enunciado enunciado : enunciados)
+            enunciados.forEach((enunciado) -> {
                 System.out.println("ID: " + enunciado.getId()
                         + "\nDESCRIPCION: " + enunciado.getDescripcion());
-            }
+            });
             System.out.println("\nIntroduce el ID del enunciado que desea visualizar: ");
             id = Util.leerInt(1, cantidadEnunciados);
             for (int i = 0; i < enunciados.size() && !encontrado; i++) {
@@ -217,7 +219,7 @@ public class Main {
                                 System.out.println("La acción de abrir no está soportada en este entorno.");
                             }
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            System.out.println(e.getMessage());
                         }
                     } else {
                         System.out.println("La clase Desktop no es soportada en este entorno.");
@@ -225,5 +227,9 @@ public class Main {
                 }
             }
         }
+    }
+
+    private static void asignarEnunciado(ExamController controlador) {
+    controlador.asignarEnunciado();
     }
 }
