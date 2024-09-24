@@ -26,6 +26,10 @@ public class Convocatoria {
         this.enunciado = enunciado;
     }
 
+    public Convocatoria(String string, String string0, LocalDate toLocalDate, String string1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     public String getConvocatoria() {
         return convocatoria;
     }
