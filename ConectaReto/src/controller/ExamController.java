@@ -47,6 +47,15 @@ public class ExamController implements ManageExams {
         } catch (SQLException e) {
             System.out.println("Error de SQL al crear la unidad didáctica.");
             e.printStackTrace();
+        }finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                conController.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return creado;
     }
