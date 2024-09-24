@@ -12,13 +12,14 @@ import java.util.ArrayList;
  * @author 2dam
  */
 public class Enunciado {
+
     private int id;
     private String descripcion;
     private Dificultad nivel;
     private boolean disponible;
     private String ruta;
-    private ArrayList <UnidadDidactica> unidades;
-    private ArrayList <Convocatoria> convocatorias;
+    private ArrayList<UnidadDidactica> unidades;
+    private ArrayList<Convocatoria> convocatorias;
 
     public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias) {
         this.id = id;
@@ -28,6 +29,9 @@ public class Enunciado {
         this.ruta = ruta;
         this.unidades = unidades;
         this.convocatorias = convocatorias;
+    }
+
+    public Enunciado() {
     }
 
     public int getId() {

@@ -15,12 +15,19 @@ import model.Enunciado;
  * @author 2dam
  */
 public interface ManageExams {
+
     public boolean crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion);
+
     public boolean crearConvocatoria (String convocatoria, String descripcion, LocalDate fecha, String curso, int enunciadoId);
+
     public Enunciado crearEnunciado();
-    public Enunciado consultarEnunciado();
-    public ArrayList<Convocatoria> consultarConvocatoria(int enunciadoId);
-    public Enunciado visualizarDocEnunciado();
+
+    public ArrayList<String> consultarEnunciado(int id);
+
+    public Convocatoria consultarConvocatoria();
+
+    public ArrayList<Enunciado> visualizarDocEnunciado();
+
     public Convocatoria asignarEnunciado();
-    
+
 }
