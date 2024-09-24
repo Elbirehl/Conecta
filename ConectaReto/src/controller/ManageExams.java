@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import model.Convocatoria;
 import model.Enunciado;
-import model.UnidadDidactica;
 
 /**
  *
@@ -17,9 +16,9 @@ import model.UnidadDidactica;
  */
 public interface ManageExams {
 
-    public UnidadDidactica crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion);
+    public boolean crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion);
 
-    public Convocatoria crearConvocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso);
+    public boolean crearConvocatoria (String convocatoria, String descripcion, LocalDate fecha, String curso, int enunciadoId);
 
     public Enunciado crearEnunciado();
 

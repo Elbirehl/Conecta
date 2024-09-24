@@ -24,7 +24,11 @@ public class ExamController implements ManageExams {
     private Connection con;
     private PreparedStatement stmt;
     private DBConnection conController = new DBConnection();
-    //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
+  
+    final String CREARUNIDAD = "INSERT INTO UnidadDidactica(acronimo, titulo, evaluacion, descripcion) VALUES (?,?,?,?)";
+    final String CREARCONVOCATORIA = "INSERT INTO ConvocatoriaExamen (convocatoria, descripcion, fecha, curso, enunciado_id) VALUES (?,?,?,?,?)";
+    final String CONSULTARCONVOCATORIA = "SELECT * FROM ConvocatoriaExamen WHERE enunciado_id = ?";
+ //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
     final String CONSUTARENUNCIADOCONUDESPECIFICA = "SELECT descripcion FROM ENUNCIADO WHERE Id IN (SELECT ENUNCIADO_ID FROM UD_ENUNCIADO WHERE UD_ID = ?)";
     //Para mostrar todas las unidades didácticas att:Meylin
     final String MOSTRARUNIDADESDIDACTICAS = "SELECT * FROM UnidadDidactica";
@@ -34,15 +38,70 @@ public class ExamController implements ManageExams {
     final String MOSTRARTODOSLOSENUNCIADOS = "SELECT id,descripcion,ruta FROM Enunciado;";
     //Saber si hay enunciados y cuantos att:Meylin
     final String CONSULTARCANTIDADENUNCIADOS = "SELECT MAX(id) FROM Enunciado";
-
+  
     @Override
-    public UnidadDidactica crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion) {
+        boolean creado = false;
+
+        try {
+            con = conController.openConnection();
+            stmt = con.prepareStatement(CREARUNIDAD);
+            stmt.setString(1, acronimo);
+            stmt.setString(2, titulo);
+            stmt.setString(3, evaluacion);
+            stmt.setString(4, descripcion);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                creado = true;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error de SQL al crear la unidad didáctica.");
+            e.printStackTrace();
+        }finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                conController.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return creado;
     }
 
     @Override
-    public Convocatoria crearConvocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean crearConvocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso, int enunciadoId) {
+        boolean creado = false;
+
+        try {
+            con = conController.openConnection();
+            stmt = con.prepareStatement(CREARCONVOCATORIA);
+            stmt.setString(1, convocatoria);
+            stmt.setString(2, descripcion);
+            stmt.setDate(3, java.sql.Date.valueOf(fecha));
+            stmt.setString(4, curso);
+            stmt.setInt(5, enunciadoId);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                creado = true;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error de SQL al crear la convocatoria de examen");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                conController.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return creado;
     }
 
     @Override
@@ -195,3 +254,4 @@ public class ExamController implements ManageExams {
         return cantidad;
     }
 }
+

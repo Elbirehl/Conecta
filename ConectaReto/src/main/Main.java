@@ -5,6 +5,7 @@
  */
 package main;
 
+
 import controller.DBConnection;
 import controller.ExamController;
 import java.awt.Desktop;
@@ -28,7 +29,6 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
         int menu;
         ExamController controlador = new ExamController();
         do {
