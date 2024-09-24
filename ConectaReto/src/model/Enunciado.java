@@ -20,14 +20,25 @@ public class Enunciado {
     private ArrayList <UnidadDidactica> unidades;
     private ArrayList <Convocatoria> convocatorias;
 
-    public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias) {
+    public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta) {
         this.id = id;
         this.descripcion = descripcion;
         this.nivel = nivel;
         this.disponible = disponible;
         this.ruta = ruta;
-        this.unidades = unidades;
-        this.convocatorias = convocatorias;
+       
+    }
+
+    public Enunciado() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Enunciado(int enunciadoId, String descripción_del_enunciado, String nivel, boolean b, String ruta) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Enunciado(int enunciadoId, String descripción_del_enunciado, Dificultad dificultad, boolean b, String rutaaarchivo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public int getId() {

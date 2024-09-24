@@ -23,6 +23,6 @@ public interface ManageExams {
     public Enunciado consultarEnunciado();
     public ArrayList<Convocatoria> consultarConvocatoria( int enunciadoId);
     public Enunciado visualizarDocEnunciado();
-    public Convocatoria asignarEnunciado((int convocatoriaId, int enunciadoId);
+    public void asignarEnunciado( );
     
 }

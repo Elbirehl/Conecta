@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import model.Convocatoria;
 import model.UnidadDidactica;
 import utilidades.Util;
 
@@ -42,7 +43,7 @@ public class Main {
                 case 1:
                     break;
                 case 2:
-                    break;
+                    break; 
                 case 3:
                     controlador.crearEnunciado();
                     break;
@@ -56,7 +57,7 @@ public class Main {
                     controlador.visualizarDocEnunciado();
                     break;
                 case 7:
-                    //controlador.asignarEnunciado();
+                    asignarEnunciado(controlador);
                     break;
                 case 8:
                     System.out.println("Gracias por usar nuestro programa.\nSaliendo...");
@@ -64,6 +65,11 @@ public class Main {
 
             }
         } while (menu != 8);
+    }
+    
+   private static void asignarEnunciado(ExamController controlador) {
+        // Preguntar al usuario por la convocatoria
+        controlador.asignarEnunciado();
     }
 
     /*private static void ConsultarEnunciado(ExamController controlador) {
@@ -99,5 +105,4 @@ public class Main {
         }
 
     }*/
-
-}
+    }

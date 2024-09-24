@@ -17,6 +17,7 @@ import model.Convocatoria;
 import model.Dificultad;
 import model.Enunciado;
 import model.UnidadDidactica;
+import utilidades.Util;
 
 /**
  *
@@ -29,7 +30,7 @@ public class ExamController implements ManageExams {
     private DBConnection conController = new DBConnection();
     //AQUI PONER LAS SENTENCIAS SQL
     final String CONSULTARCONVOCATORIASPORUNENUNCIADOCONCRETO = "SELECT * FROM ConvocatoriaExamen WHERE enunciado_id = ?";
-    final String ASIGNARENUNCIADOACONVOCATORIA = "UPDATE ConvocatoriaExamen SET enunciado_id = ? WHERE convocatoria = ?";
+    final String UPDATEConvocatoria = "UPDATE ConvocatoriaExamen SET id_Enunciado = ? WHERE convocatoria = ?";
 
     @Override
     public UnidadDidactica crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion) {
@@ -94,47 +95,102 @@ public class ExamController implements ManageExams {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public Convocatoria asignarEnunciado(int convocatoriaId, int enunciadoId) {
-        Convocatoria convocatoriaAsignada = null;
+   @Override
+public void asignarEnunciado() {
+    ArrayList<Convocatoria> convocatoriasSinEnunciado = new ArrayList<>();
 
-        try {
-            // Abrimos conexión
-            con = conController.openConnection();
+    try {
+        // Abrir conexión
+        con = conController.openConnection();
 
-            // Preparamos la sentencia
-            stmt = con.prepareStatement(ASIGNARENUNCIADOACONVOCATORIA);
-            stmt.setInt(1, enunciadoId); // Asignamos el ID del enunciado
-            stmt.setInt(2, convocatoriaId); // Especificamos la convocatoria a actualizar
+        // 1. Consultar convocatorias sin enunciado asignado
+        String consultarConvocatoriasSinEnunciado = "SELECT convocatoria, descripcion, fecha, curso FROM ConvocatoriaExamen WHERE enunciado_id IS NULL";
+        stmt = con.prepareStatement(consultarConvocatoriasSinEnunciado);
+        ResultSet resultSet = stmt.executeQuery();
 
-            // Ejecutamos la actualización
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Enunciado asignado correctamente a la convocatoria.");
+        // Mostrar convocatorias sin enunciado asignado
+        while (resultSet.next()) {
+            String convocatoriaNombre = resultSet.getString("convocatoria");
+            String descripcion = resultSet.getString("descripcion");
+            LocalDate fecha = resultSet.getDate("fecha").toLocalDate();
+            String curso = resultSet.getString("curso");
 
-                // Crear un objeto Enunciado con el ID asignado (puedes agregar más detalles si es necesario)
-                Enunciado enunciadoAsignado = new Enunciado();
-                enunciadoAsignado.setId(enunciadoId);
-
-                // Crear un objeto Convocatoria representando la convocatoria actualizada
-                convocatoriaAsignada = new Convocatoria("Convocatoria " + convocatoriaId, "Descripción actualizada", LocalDate.now(), "Curso", enunciadoAsignado);
-            } else {
-                System.out.println("No se pudo asignar el enunciado. No se encontró la convocatoria.");
-            }
-        } catch (SQLException e) {
-            System.out.println("Error de SQL al asignar enunciado a la convocatoria.");
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                conController.closeConnection(stmt, con);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            // Crear objeto Convocatoria y añadir a la lista
+            Convocatoria convocatoria = new Convocatoria(convocatoriaNombre, descripcion, fecha, curso, null);
+            convocatoriasSinEnunciado.add(convocatoria);
+            System.out.println("Convocatoria: " + convocatoriaNombre);
         }
 
-        return convocatoriaAsignada;
+        if (convocatoriasSinEnunciado.isEmpty()) {
+            System.out.println("No hay convocatorias sin enunciado.");
+            return; // Salir si no hay convocatorias disponibles
+        }
+
+        // 2. Preguntar al usuario por la convocatoria a modificar
+        System.out.println("Selecciona el número de la convocatoria a la que quieres asignar un enunciado:");
+        for (int i = 0; i < convocatoriasSinEnunciado.size(); i++) {
+            System.out.println((i + 1) + ". " + convocatoriasSinEnunciado.get(i).getConvocatoria());
+        }
+        
+        int seleccion = Util.leerInt(1, convocatoriasSinEnunciado.size());
+        Convocatoria convocatoriaSeleccionada = convocatoriasSinEnunciado.get(seleccion - 1);
+        String convocatoriaNombre = convocatoriaSeleccionada.getConvocatoria();
+
+        // 3. Consultar enunciados disponibles
+        stmt = con.prepareStatement("SELECT id, descripcion FROM Enunciado");
+        resultSet = stmt.executeQuery();
+        ArrayList<Integer> enunciados = new ArrayList<>();
+
+        System.out.println("Enunciados disponibles:");
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String descripcion = resultSet.getString("descripcion");
+            enunciados.add(id);
+            System.out.println("ID: " + id + " - Descripción: " + descripcion);
+        }
+
+        if (enunciados.isEmpty()) {
+            System.out.println("No hay enunciados disponibles para asignar.");
+            return; // Salir si no hay enunciados disponibles
+        }
+
+        // 4. Preguntar al usuario por el ID del enunciado a asignar
+        System.out.println("Introduce el ID del enunciado que deseas asignar: ");
+        int enunciadoId = Util.leerInt(); 
+        if (!enunciados.contains(enunciadoId)) {
+            System.out.println("El ID de enunciado introducido no es válido.");
+            return; // Salir si el ID no es válido
+        }
+
+        // 5. Asignar el enunciado a la convocatoria
+        stmt = con.prepareStatement("UPDATE ConvocatoriaExamen SET enunciado_id = ? WHERE convocatoria = ?");
+        stmt.setInt(1, enunciadoId); // Cambiado a enunciado_id
+        stmt.setString(2, convocatoriaNombre);
+
+        int rowsAffected = stmt.executeUpdate();
+        if (rowsAffected > 0) {
+            System.out.println("Enunciado asignado correctamente a la convocatoria " + convocatoriaNombre);
+            // Actualizar el objeto convocatoria seleccionada
+            Enunciado enunciadoAsignado = new Enunciado(enunciadoId, "Descripción del enunciado", Dificultad.MEDIA, true, "ruta");
+            convocatoriaSeleccionada.setEnunciado(enunciadoAsignado);
+        } else {
+            System.out.println("No se pudo asignar el enunciado a la convocatoria.");
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error al asignar enunciado a la convocatoria.");
+        e.printStackTrace(); // Manejo de error
+    } finally {
+        try {
+            if (stmt != null) {
+                stmt.close();
+            }
+            conController.closeConnection(stmt, con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+}
+
+
 }
