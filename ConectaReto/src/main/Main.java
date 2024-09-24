@@ -5,7 +5,6 @@
  */
 package main;
 
-
 import controller.DBConnection;
 import controller.ExamController;
 import java.awt.Desktop;
@@ -14,6 +13,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import model.Enunciado;
 import model.UnidadDidactica;
@@ -44,8 +44,10 @@ public class Main {
             menu = Util.leerInt(1, 8);
             switch (menu) {
                 case 1:
+                    crearUnidad(controlador);
                     break;
                 case 2:
+                    crearConvocatoria(controlador);
                     break;
                 case 3:
                     controlador.crearEnunciado();
@@ -148,6 +150,52 @@ public class Main {
                     }
                 }
             }
+        }
+    }
+
+    private static void crearUnidad(ExamController controlador) {
+
+        System.out.println("Introduce el acrónimo de la unidad didáctica:");
+        String acronimo = Util.introducirCadena();
+
+        System.out.println("Introduce el título de la unidad didáctica:");
+        String titulo = Util.introducirCadena();
+
+        System.out.println("Introduce la evaluación de la unidad didáctica:");
+        String evaluacion = Util.introducirCadena();
+
+        System.out.println("Introduce una descripción para la unidad didáctica:");
+        String descripcion = Util.introducirCadena();
+
+        boolean creada = controlador.crearUnidad(acronimo, titulo, evaluacion, descripcion);
+
+        if (creada) {
+            System.out.println("Unidad didáctica creada exitosamente.");
+        } else {
+            System.out.println("Error al crear la unidad didáctica.");
+        }
+    }
+
+    private static void crearConvocatoria(ExamController controlador) {
+
+        System.out.println("Introduce el el nombre de la convocatoria:");
+        String convocatoria = Util.introducirCadena();
+
+        System.out.println("Introduce la descripción de la convocatoria:");
+        String descripcion = Util.introducirCadena();
+
+        System.out.println("Introduce la fecha de la convocatoria:");
+        LocalDate fecha = Util.leerFechaAMD();
+
+        System.out.println("Introduce el curso:");
+        String curso = Util.introducirCadena();
+
+        boolean creada = controlador.crearConvocatoria(convocatoria, descripcion, fecha, curso);
+
+        if (creada) {
+            System.out.println("Convocatoria creada exitosamente.");
+        } else {
+            System.out.println("Error al crear la convocatoria.");
         }
     }
 }

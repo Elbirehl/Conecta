@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS ConvocatoriaExamen (
     descripcion TEXT NOT NULL,
     fecha DATE NOT NULL,
     curso VARCHAR(50) NOT NULL,
-    enunciado_id INT NOT NULL,
+    enunciado_id INT NULL,
     FOREIGN KEY (enunciado_id) REFERENCES Enunciado(id) ON DELETE CASCADE
 );
 
