@@ -63,7 +63,7 @@ public class ExamController implements ManageExams {
                 if (stmt != null) {
                     stmt.close();
                 }
-                conController.closeConnection(stmt, con);
+                //conController.closeConnection(stmt, con);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -251,6 +251,15 @@ public class ExamController implements ManageExams {
             e.printStackTrace();
         }
         return cantidad;
+    }
+    public boolean existeUnidadDidactica(String acronimo) {
+        ArrayList<UnidadDidactica> unidadesExistentes = mostrarUnidadesDidacticas();
+        for (UnidadDidactica unidad : unidadesExistentes) {
+            if (unidad.getAcronimo().equals(acronimo)) {
+                return true; // Retorna verdadero si el acrónimo ya existe
+            }
+        }
+        return false; // Retorna falso si no existe
     }
 
 }

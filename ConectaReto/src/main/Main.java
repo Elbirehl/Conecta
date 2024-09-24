@@ -158,21 +158,49 @@ public class Main {
         System.out.println("Introduce el acrónimo de la unidad didáctica:");
         String acronimo = Util.introducirCadena();
 
+        // Validar que el acrónimo no esté vacío y siga el formato correcto (ej. UD01, UD02, ...)
+        while (!acronimo.matches("UD\\d{2}")) {
+            System.out.println("El acrónimo debe seguir el formato 'UD' seguido de dos dígitos (ej. UD01). Inténtalo de nuevo:");
+            acronimo = Util.introducirCadena();
+        }
+
+        // Comprobar que la unidad didáctica no se repita
+        while (controlador.existeUnidadDidactica(acronimo)) {
+            System.out.println("Ya existe una unidad didáctica con el acrónimo '" + acronimo + "'. Intenta con otro.");
+            acronimo = Util.introducirCadena();
+        }
+
         System.out.println("Introduce el título de la unidad didáctica:");
         String titulo = Util.introducirCadena();
+        while (titulo.isEmpty()) {
+            System.out.println("El título no puede estar vacío.");
+            titulo = Util.introducirCadena();
+        }
 
-        System.out.println("Introduce la evaluación de la unidad didáctica:");
+        System.out.println("Introduce la evaluación de la unidad didáctica (Primera, segunda o tercera evaluación):");
         String evaluacion = Util.introducirCadena();
+        while (evaluacion.isEmpty()) {
+            System.out.println("La evaluación no puede estar vacía.");
+            evaluacion = Util.introducirCadena();
+        }
 
         System.out.println("Introduce una descripción para la unidad didáctica:");
         String descripcion = Util.introducirCadena();
+        while (descripcion.isEmpty()) {
+            System.out.println("La descripción no puede estar vacía.");
+            descripcion = Util.introducirCadena();
+        }
 
-        boolean creada = controlador.crearUnidad(acronimo, titulo, evaluacion, descripcion);
+        try {
+            boolean creada = controlador.crearUnidad(acronimo, titulo, evaluacion, descripcion);
 
-        if (creada) {
-            System.out.println("Unidad didáctica creada exitosamente.");
-        } else {
-            System.out.println("Error al crear la unidad didáctica.");
+            if (creada) {
+                System.out.println("Unidad didáctica creada exitosamente.");
+            } else {
+                System.out.println("Error al crear la unidad didáctica.");
+            }
+        } catch (Exception e) {
+            System.out.println("Ocurrió un error al crear la unidad didáctica: " + e.getMessage());
         }
     }
 
@@ -180,22 +208,37 @@ public class Main {
 
         System.out.println("Introduce el el nombre de la convocatoria:");
         String convocatoria = Util.introducirCadena();
+        while (convocatoria.isEmpty()) {
+            System.out.println("El nombre de la convocatoria no puede estar vacío.");
+            convocatoria = Util.introducirCadena();
+        }
 
         System.out.println("Introduce la descripción de la convocatoria:");
         String descripcion = Util.introducirCadena();
+        while (descripcion.isEmpty()) {
+            System.out.println("La descripción no puede estar vacía.");
+            descripcion = Util.introducirCadena();
+        }
 
         System.out.println("Introduce la fecha de la convocatoria:");
         LocalDate fecha = Util.leerFechaAMD();
 
         System.out.println("Introduce el curso:");
         String curso = Util.introducirCadena();
+        while (curso.isEmpty()) {
+            System.out.println("El curso no puede estar vacío.");
+            curso = Util.introducirCadena();
+        }
+        try {
+            boolean creada = controlador.crearConvocatoria(convocatoria, descripcion, fecha, curso);
 
-        boolean creada = controlador.crearConvocatoria(convocatoria, descripcion, fecha, curso);
-
-        if (creada) {
-            System.out.println("Convocatoria creada exitosamente.");
-        } else {
-            System.out.println("Error al crear la convocatoria.");
+            if (creada) {
+                System.out.println("Convocatoria creada exitosamente.");
+            } else {
+                System.out.println("Error al crear la convocatoria.");
+            }
+        } catch (Exception e) {
+            System.out.println("Ocurrió un error al crear la convocatoria: " + e.getMessage());
         }
     }
 }
