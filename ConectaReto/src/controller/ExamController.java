@@ -17,7 +17,6 @@ import utilidades.Util;
 import model.Enunciado;
 import model.UnidadDidactica;
 
-
 /**
  *
  * @author 2dam
@@ -28,8 +27,11 @@ public class ExamController implements ManageExams {
     private PreparedStatement stmt;
     private DBConnection conController = new DBConnection();
 
+    //IRATI
     final String CREARUNIDAD = "INSERT INTO UnidadDidactica(acronimo, titulo, evaluacion, descripcion) VALUES (?,?,?,?)";
+    //IRATI
     final String CREARCONVOCATORIA = "INSERT INTO ConvocatoriaExamen (convocatoria, descripcion, fecha, curso, enunciado_id) VALUES (?,?,?,?,?)";
+    //OLAIA
     final String CONSULTARCONVOCATORIA = "SELECT * FROM ConvocatoriaExamen WHERE enunciado_id = ?";
     //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
     final String CONSUTARENUNCIADOCONUDESPECIFICA = "SELECT descripcion FROM ENUNCIADO WHERE Id IN (SELECT ENUNCIADO_ID FROM UD_ENUNCIADO WHERE UD_ID = ?)";
@@ -107,15 +109,14 @@ public class ExamController implements ManageExams {
         return creado;
     }
 
-   @Override
+    @Override
     public Enunciado crearEnunciado(String desc, Dificultad dificultad, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias) {
-
         // Crear objeto Enunciado que será retornado al final
         Enunciado enunciado = null;
-        
+
         // Intentar abrir conexión con la base de datos
-        try (Connection conn = dbConnection.getConnection()) {
-            
+        try (Connection conn = conController.getConnection()) {
+
             // 1. Insertar nuevo enunciado en la tabla Enunciado
             String insertEnunciado = "INSERT INTO Enunciado (descripcion, nivel_dificultad, disponible, ruta) VALUES (?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(insertEnunciado, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -125,25 +126,30 @@ public class ExamController implements ManageExams {
             ps.setString(4, ruta);
             ps.executeUpdate();
 
+            // Obtener el ID del enunciado insertado
             // 2. Obtener el ID del enunciado recién insertado
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 int enunciadoId = rs.getInt(1);
 
+                // 5. Asociar Unidades Didácticas con el enunciado
                 // 3. Asociar Unidades Didácticas con el enunciado
                 String insertUDEnunciado = "INSERT INTO UD_Enunciado (UD_id, enunciado_id) VALUES (?, ?)";
                 for (UnidadDidactica unidad : unidades) {
                     PreparedStatement psUnidad = conn.prepareStatement(insertUDEnunciado);
+                    psUnidad.setInt(1, unidad.getId()); // Ajusta este método para obtener el ID de la unidad
                     psUnidad.setInt(1, unidad.getId()); // Obtener el ID de la unidad didáctica
                     psUnidad.setInt(2, enunciadoId);
                     psUnidad.executeUpdate();
                 }
 
+                // 6. Asociar Convocatoria con el enunciado
                 // 4. Asociar Convocatorias con el enunciado
                 for (Convocatoria convocatoria : convocatorias) {
                     String updateConvocatoria = "UPDATE ConvocatoriaExamen SET enunciado_id = ? WHERE convocatoria = ?";
                     PreparedStatement psConvocatoria = conn.prepareStatement(updateConvocatoria);
                     psConvocatoria.setInt(1, enunciadoId);
+                    psConvocatoria.setString(2, convocatoria.getConvocatoria()); // Ajusta este método para obtener la convocatoria
                     psConvocatoria.setString(2, convocatoria.getConvocatoria()); // Obtener la convocatoria por nombre
                     psConvocatoria.executeUpdate();
                 }
@@ -151,8 +157,11 @@ public class ExamController implements ManageExams {
                 enunciado = new Enunciado(desc, dificultad, disponible, ruta, unidades, convocatorias);
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             e.printStackTrace();// Imprimir errores de SQL en caso de excepción
         }
+        return enunciado;
+    }
 
     @Override
     public ArrayList<String> consultarEnunciado(int id) {
@@ -181,6 +190,7 @@ public class ExamController implements ManageExams {
         return enunciado;
     }
 
+    //OLAIA
     @Override
     public Convocatoria consultarConvocatoria() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -214,23 +224,25 @@ public class ExamController implements ManageExams {
         return enunciados;
     }
 
+    //OLAIA
     @Override
     public Convocatoria asignarEnunciado() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    //METODOS EXTRA DE ELBIRE
     public UnidadDidactica mostrarUnidadDidactica() {
-        
+
         UnidadDidactica unidadSeleccionada = null;
-        
+
         // Intentar abrir conexión con la base de datos
-        try (Connection conn = dbConnection.getConnection()) {
-            
+        try (Connection conn = conController.getConnection()) {
+
             // 1. Obtener lista de Unidades Didácticas
             String query = "SELECT id, acronimo FROM UnidadDidactica";
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
-            
+
             // 2. Mostrar la lista de Unidades Didácticas disponibles
             System.out.println("Lista de Unidades Didácticas:");
             while (rs.next()) {
@@ -238,7 +250,7 @@ public class ExamController implements ManageExams {
                 String acronimo = rs.getString("acronimo");
                 System.out.println(id + ": " + acronimo); // Mostrar ID y acrónimo
             }
-            
+
             // 3. Solicitar al usuario que introduzca el ID de la Unidad Didáctica deseada
             System.out.println("Introduce el ID de la Unidad Didáctica que quieres seleccionar:");
             int idSeleccionado = Integer.parseInt(Util.introducirCadena()); // Convertir la entrada del usuario a entero
@@ -248,7 +260,7 @@ public class ExamController implements ManageExams {
             PreparedStatement psDetalle = conn.prepareStatement(detalleQuery);
             psDetalle.setInt(1, idSeleccionado);
             ResultSet rsDetalle = psDetalle.executeQuery();
-            
+
             // 5. Si la Unidad Didáctica existe, crear el objeto UnidadDidactica
             if (rsDetalle.next()) {
                 String acronimo = rsDetalle.getString("acronimo");
@@ -268,12 +280,12 @@ public class ExamController implements ManageExams {
     }
 
     public Convocatoria consultarConvocatoriaDB() {
-        
+
         Convocatoria convocatoriaSeleccionada = null;
-        
+
         // Intentar abrir conexión con la base de datos
-        try (Connection conn = dbConnection.getConnection()) {
-            
+        try (Connection conn = conController.getConnection()) {
+
             // 1. Consultar la lista de Convocatorias
             String query = "SELECT convocatoria FROM ConvocatoriaExamen";
             PreparedStatement ps = conn.prepareStatement(query);
@@ -281,53 +293,55 @@ public class ExamController implements ManageExams {
 
             ArrayList<String> convocatorias = new ArrayList<>();
             System.out.println("Lista de Convocatorias:");
-
             // 2. Mostrar la lista de Convocatorias disponibles
             int index = 1;
             while (rs.next()) {
                 String convocatoria = rs.getString("convocatoria");
+                System.out.println(convocatoria);
                 convocatorias.add(convocatoria);
                 System.out.println(index + ". " + convocatoria); // Mostrar número y convocatoria
                 index++;
             }
 
+            System.out.println("Introduce el nombre de la Convocatoria que quieres seleccionar:");
+            String convocatoriaSeleccionadaStr = Util.introducirCadena();
             // 3. Solicitar al usuario que seleccione una convocatoria por número
             System.out.println("Introduce el número de la Convocatoria que quieres seleccionar:");
             int seleccion = Util.leerInt(); // Leer la selección del usuario
 
+            // Obtener detalles de la convocatoria seleccionada
             // 4. Validar la selección del usuario
             if (seleccion < 1 || seleccion > convocatorias.size()) {
                 System.out.println("¡Error! Selección inválida.");
                 return null;
             }
-
             // 5. Obtener la convocatoria seleccionada por el usuario
-            String convocatoriaSeleccionadaStr = convocatorias.get(seleccion - 1);
-
             // 6. Consultar los detalles de la convocatoria seleccionada
             String detalleQuery = "SELECT * FROM ConvocatoriaExamen WHERE convocatoria = ?";
             PreparedStatement psDetalle = conn.prepareStatement(detalleQuery);
             psDetalle.setString(1, convocatoriaSeleccionadaStr);
             ResultSet rsDetalle = psDetalle.executeQuery();
-            
+
             // 7. Si la convocatoria existe, crear el objeto Convocatoria
             if (rsDetalle.next()) {
                 String descripcion = rsDetalle.getString("descripcion");
                 LocalDate fecha = rsDetalle.getDate("fecha").toLocalDate();
                 String curso = rsDetalle.getString("curso");
                 int enunciadoId = rsDetalle.getInt("enunciado_id");
-                Enunciado enunciado = null;
+                Enunciado enunciado = null; // Puedes implementar la obtención de detalles del enunciado si es necesario
                 convocatoriaSeleccionada = new Convocatoria(convocatoriaSeleccionadaStr, descripcion, fecha, curso, enunciado);
             } else {
                 System.out.println("¡Error! Convocatoria no encontrada.");
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             e.printStackTrace(); // Manejar errores de SQL
         }
         return convocatoriaSeleccionada;
     }
 
+    //METODOS EXTRA MEYLIN
     public ArrayList<UnidadDidactica> mostrarUnidadesDidacticas() {
         ArrayList<UnidadDidactica> unidadesDidacticas = new ArrayList();
         UnidadDidactica ud = null;
