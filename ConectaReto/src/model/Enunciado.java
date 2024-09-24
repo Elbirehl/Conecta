@@ -21,8 +21,7 @@ public class Enunciado {
     private ArrayList<UnidadDidactica> unidades;
     private ArrayList<Convocatoria> convocatorias;
 
-    public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias) {
-        this.id = id;
+    public Enunciado(String descripcion, Dificultad nivel, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias) {
         this.descripcion = descripcion;
         this.nivel = nivel;
         this.disponible = disponible;
