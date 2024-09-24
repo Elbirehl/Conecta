@@ -5,33 +5,39 @@
  */
 package controller;
 
+import static com.mysql.cj.conf.PropertyKey.logger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 /**
  *
  * @author 2dam
  */
 public class DBConnection {
+
     /**
      * Abre una conexion con la base de datos.
      */
-	public Connection openConnection() {
-		// TODO Auto-generated method stub
-		Connection con = null;
-		try {
-			String url = "jdbc:mysql://localhost:3306/examendb?serverTimezone=Europe/Madrid&useSSL=false";
-			con = DriverManager.getConnection(url, "root", "abcd*1234");
-		} catch (SQLException e) {
-			System.out.println("Error al intentar abrir la BD");
-		}
-		return con;
-	}
-	/**
+    public Connection openConnection() {
+        // TODO Auto-generated method stub
+        Connection con = null;
+        try {
+            String url = "jdbc:mysql://localhost:3306/examendb?serverTimezone=Europe/Madrid&useSSL=false";
+            con = DriverManager.getConnection(url, "root", "abcd*1234");
+        } catch (SQLException e) {
+            //Logger.getLogger("DBConnection").severe(e.getLocalizedMessage());
+            System.out.println("Error al intentar abrir la BD: " + e.getMessage());
+            System.exit(1);
+        }
+        return con;
+    }
+
+    /**
      * Cierra la conexion con la base de datos.
-     * 
+     *
      * @throws SQLException si ocurre un error al cerrar la conexión
      */
 	public void closeConnection(PreparedStatement stmt, Connection con) throws SQLException {
