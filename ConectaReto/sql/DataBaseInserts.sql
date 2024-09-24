@@ -12,7 +12,7 @@ VALUES
 ('Crea una consulta SQL que recupere todos los registros de una tabla de clientes ordenados por nombre.', 'baja', TRUE, 'enunciados/UD01_Introduccion_SQL_Consulta_Basica.docx'),
 ('Diseña un diagrama entidad-relación para un sistema de gestión de biblioteca.', 'media', TRUE, 'enunciados/UD02_Modelado_Datos_Diagrama_ER.docx'),
 ('Desarrolla un script SQL para implementar un sistema de control de acceso basado en roles.', 'alta', FALSE, 'enunciados/UD03_Administracion_BD_Control_Acceso.docx'),
-('Optimiza una consulta SQL para mejorar su rendimiento en una base de datos de gran tamaño.', 'alta', TRUE, 'enunciados/UD04_Desarrollo_SQL_Consulta_Avanzada.docx');
+('Optimiza una consulta SQL para mejorar su rendimiento en una base de datos de gran tamaño.', 'alta', TRUE, 'enunciados/UD01_UD04_Optimizar_Consulta_SQL.docx');
 
 INSERT INTO ConvocatoriaExamen (convocatoria, descripcion, fecha, curso, enunciado_id)
 VALUES
