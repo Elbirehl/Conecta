@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
 
 import controller.DBConnection;
@@ -12,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import model.Convocatoria;
+import model.Enunciado;
 import model.UnidadDidactica;
 import utilidades.Util;
 
@@ -51,7 +47,7 @@ public class Main {
                     //ConsultarEnunciado(controlador);
                     break;
                 case 5:
-                    //controlador.consultarConvocatoria();
+                    consultarConvocatoria(controlador);
                     break;
                 case 6:
                     controlador.visualizarDocEnunciado();
@@ -67,10 +63,61 @@ public class Main {
         } while (menu != 8);
     }
     
-   private static void asignarEnunciado(ExamController controlador) {
-        // Preguntar al usuario por la convocatoria
-        controlador.asignarEnunciado();
+    private static void consultarConvocatoria(ExamController controlador) {
+        System.out.println("Introduce el ID del enunciado para consultar sus convocatorias:");
+        int enunciadoId = Util.leerInt();
+
+        // Call the consultarConvocatoria method
+        ArrayList<Convocatoria> convocatorias = controlador.consultarConvocatoria(enunciadoId);
+        
+        // Check if any convocatorias were found
+        if (convocatorias.isEmpty()) {
+            System.out.println("No se encontraron convocatorias para el enunciado con ID: " + enunciadoId);
+        } else {
+            System.out.println("Convocatorias encontradas:");
+            for (Convocatoria convocatoria : convocatorias) {
+                System.out.println("Nombre: " + convocatoria.getConvocatoria() + 
+                                   ", Descripción: " + convocatoria.getDescripcion() + 
+                                   ", Fecha: " + convocatoria.getFecha() + 
+                                   ", Curso: " + convocatoria.getCurso());
+            }
+        }
     }
+    
+  private static void asignarEnunciado(ExamController controlador) {
+    ArrayList<Convocatoria> convocatoriasSinEnunciado = controlador.obtenerConvocatoriasSinEnunciado();
+    
+    if (convocatoriasSinEnunciado.isEmpty()) {
+        System.out.println("No hay convocatorias sin enunciado.");
+        return;
+    }
+
+    // 1. Mostrar las convocatorias al usuario
+    System.out.println("Selecciona el número de la convocatoria a la que quieres asignar un enunciado:");
+    for (int i = 0; i < convocatoriasSinEnunciado.size(); i++) {
+        System.out.println((i + 1) + ". " + convocatoriasSinEnunciado.get(i).getConvocatoria());
+    }
+    int seleccionConvocatoria = Util.leerInt(1, convocatoriasSinEnunciado.size());
+
+    // 2. Mostrar los enunciados disponibles al usuario
+    ArrayList<Enunciado> enunciadosDisponibles = controlador.obtenerEnunciadosDisponibles();
+    
+    if (enunciadosDisponibles.isEmpty()) {
+        System.out.println("No hay enunciados disponibles para asignar.");
+        return;
+    }
+    
+    System.out.println("Enunciados disponibles:");
+    for (Enunciado enunciado : enunciadosDisponibles) {
+        System.out.println("ID: " + enunciado.getId() + " - Descripción: " + enunciado.getDescripcion());
+    }
+    
+    System.out.println("Introduce el ID del enunciado que deseas asignar:");
+    int enunciadoId = Util.leerInt();
+
+    // 3. Asignar el enunciado seleccionado a la convocatoria
+    controlador.asignarEnunciado(seleccionConvocatoria, enunciadoId);
+}
 
     /*private static void ConsultarEnunciado(ExamController controlador) {
         int id;

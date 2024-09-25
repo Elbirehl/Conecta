@@ -12,21 +12,23 @@ import java.util.ArrayList;
  * @author 2dam
  */
 public class Enunciado {
+
     private int id;
     private String descripcion;
     private Dificultad nivel;
     private boolean disponible;
     private String ruta;
-    private ArrayList <UnidadDidactica> unidades;
-    private ArrayList <Convocatoria> convocatorias;
+    private ArrayList<UnidadDidactica> unidades;
+    private ArrayList<Convocatoria> convocatorias;
 
-    public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta) {
+    public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias) {
         this.id = id;
         this.descripcion = descripcion;
         this.nivel = nivel;
         this.disponible = disponible;
         this.ruta = ruta;
-       
+        this.unidades = unidades;
+        this.convocatorias = convocatorias;
     }
 
     public Enunciado() {
@@ -37,10 +39,16 @@ public class Enunciado {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public Enunciado(int enunciadoId, String descripción_del_enunciado, Dificultad dificultad, boolean b, String rutaaarchivo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta) {
+        this.id = id;
+        this.descripcion = descripcion;
+        this.nivel = nivel;
+        this.disponible = disponible;
+        this.ruta = ruta;
+        this.unidades = new ArrayList<>(); // Inicializar las listas vacías
+        this.convocatorias = new ArrayList<>();
     }
-
+    
     public int getId() {
         return id;
     }
