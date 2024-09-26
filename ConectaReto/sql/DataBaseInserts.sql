@@ -19,7 +19,10 @@ VALUES
 ('Primera Convocatoria 2024', 'Examen de introducción a SQL para evaluar conocimientos básicos.', '2024-03-15', 'Curso de SQL Básico', 1),
 ('Segunda Convocatoria 2024', 'Evaluación sobre modelado de datos con enfoque en diagramas ER.', '2024-06-10', 'Curso de Modelado de Datos', 2),
 ('Convocatoria Extraordinaria 2024', 'Examen práctico sobre administración de bases de datos.', '2024-09-20', 'Curso de Administración de Bases de Datos', 3),
-('Primera Convocatoria Avanzada 2024', 'Evaluación de técnicas avanzadas en desarrollo de aplicaciones SQL.', '2024-11-05', 'Curso de Desarrollo Avanzado con SQL', 4);
+('Primera Convocatoria Avanzada 2024', 'Evaluación de técnicas avanzadas en desarrollo de aplicaciones SQL.', '2024-11-05', 'Curso de Desarrollo Avanzado con SQL', 4),
+('Convocatoria Septiembre', 'Convocatoria final de septiembre', '2024-09-01', 'Curso 2023-2024', NULL),
+('Convocatoria Diciembre', 'Convocatoria extraordinaria de diciembre', '2024-12-15', 'Curso 2023-2024', NULL),
+('Convocatoria Marzo', 'Convocatoria de recuperación en marzo', '2024-03-20', 'Curso 2023-2024', NULL);
 
 INSERT INTO UD_Enunciado (UD_id, enunciado_id) VALUES
 (1, 1),  
