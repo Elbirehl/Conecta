@@ -79,7 +79,7 @@ public class ExamController implements ManageExams {
     }
 
     @Override
-    public boolean crearConvocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso, int enunciadoId) {
+    public boolean crearConvocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso) {
         boolean creado = false;
 
         try {
@@ -89,7 +89,6 @@ public class ExamController implements ManageExams {
             stmt.setString(2, descripcion);
             stmt.setDate(3, java.sql.Date.valueOf(fecha));
             stmt.setString(4, curso);
-            stmt.setInt(5, enunciadoId);
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
@@ -408,5 +407,15 @@ public class ExamController implements ManageExams {
         }
         conController.closeConnection(stmt, con);
         return cantidad;
+    }
+
+    public boolean existeUnidadDidactica(String acronimo) {
+        ArrayList<UnidadDidactica> unidadesExistentes = mostrarUnidadesDidacticas();
+        for (UnidadDidactica unidad : unidadesExistentes) {
+            if (unidad.getAcronimo().equals(acronimo)) {
+                return true; // Retorna verdadero si el acrónimo ya existe
+            }
+        }
+        return false; // Retorna falso si no existe
     }
 }

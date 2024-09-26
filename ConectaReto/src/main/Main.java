@@ -11,6 +11,7 @@ import controller.ExamController;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import model.Enunciado;
 import model.UnidadDidactica;
@@ -41,8 +42,10 @@ public class Main {
             menu = Util.leerInt(1, 8);
             switch (menu) {
                 case 1:
+                    crearUnidad(controlador);
                     break;
                 case 2:
+                    crearConvocatoria(controlador);
                     break;
                 case 3:
                     crearEnunciado(controlador);
@@ -66,7 +69,101 @@ public class Main {
             }
         } while (menu != 8);
     }
+private static void crearUnidad(ExamController controlador) {
 
+        System.out.println("Introduce el acrónimo de la unidad didáctica:");
+        String acronimo = Util.introducirCadena();
+
+        // Validar que el acrónimo no esté vacío y siga el formato correcto (ej. UD01, UD02, ...)
+        while (!acronimo.matches("UD\\d{2}")) {
+            System.out.println("El acrónimo debe seguir el formato 'UD' seguido de dos dígitos (ej. UD01). Inténtalo de nuevo:");
+            acronimo = Util.introducirCadena();
+        }
+
+        // Comprobar que la unidad didáctica no se repita
+        while (controlador.existeUnidadDidactica(acronimo)) {
+            System.out.println("Ya existe una unidad didáctica con el acrónimo '" + acronimo + "'. Intenta con otro:");
+            acronimo = Util.introducirCadena();
+        }
+
+        System.out.println("Introduce el título de la unidad didáctica:");
+        String titulo = Util.introducirCadena();
+        while (titulo.isEmpty()) {
+            System.out.println("El título no puede estar vacío.");
+            titulo = Util.introducirCadena();
+        }
+
+        System.out.println("Introduce la evaluación de la unidad didáctica (Primera, segunda o tercera evaluación):");
+        String evaluacion = Util.introducirCadena();
+        // Validar que la evaluación no esté vacía y sea una de las opciones válidas
+        while (evaluacion.isEmpty() || (!evaluacion.equalsIgnoreCase("Primera")
+                && !evaluacion.equalsIgnoreCase("Segunda")
+                && !evaluacion.equalsIgnoreCase("Tercera"))) {
+            if (evaluacion.isEmpty()) {
+                System.out.println("La evaluación no puede estar vacía.");
+            } else {
+                System.out.println("La evaluación debe ser 'Primera', 'Segunda' o 'Tercera'. Inténtalo de nuevo:");
+            }
+            evaluacion = Util.introducirCadena();
+        }
+        
+        System.out.println("Introduce una descripción para la unidad didáctica:");
+        String descripcion = Util.introducirCadena();
+        while (descripcion.isEmpty()) {
+            System.out.println("La descripción no puede estar vacía.");
+            descripcion = Util.introducirCadena();
+        }
+
+        try {
+            boolean creada = controlador.crearUnidad(acronimo, titulo, evaluacion, descripcion);
+
+            if (creada) {
+                System.out.println("Unidad didáctica creada exitosamente.");
+            } else {
+                System.out.println("Error al crear la unidad didáctica.");
+            }
+        } catch (Exception e) {
+            System.out.println("Ocurrió un error al crear la unidad didáctica: " + e.getMessage());
+        }
+    }
+
+    private static void crearConvocatoria(ExamController controlador) {
+
+        System.out.println("Introduce el el nombre de la convocatoria:");
+        String convocatoria = Util.introducirCadena();
+        while (convocatoria.isEmpty()) {
+            System.out.println("El nombre de la convocatoria no puede estar vacío.");
+            convocatoria = Util.introducirCadena();
+        }
+
+        System.out.println("Introduce la descripción de la convocatoria:");
+        String descripcion = Util.introducirCadena();
+        while (descripcion.isEmpty()) {
+            System.out.println("La descripción no puede estar vacía.");
+            descripcion = Util.introducirCadena();
+        }
+
+        System.out.println("Introduce la fecha de la convocatoria:");
+        LocalDate fecha = Util.leerFechaAMD();
+
+        System.out.println("Introduce el curso:");
+        String curso = Util.introducirCadena();
+        while (curso.isEmpty()) {
+            System.out.println("El curso no puede estar vacío.");
+            curso = Util.introducirCadena();
+        }
+        try {
+            boolean creada = controlador.crearConvocatoria(convocatoria, descripcion, fecha, curso);
+
+            if (creada) {
+                System.out.println("Convocatoria creada exitosamente.");
+            } else {
+                System.out.println("Error al crear la convocatoria.");
+            }
+        } catch (Exception e) {
+            System.out.println("Ocurrió un error al crear la convocatoria: " + e.getMessage());
+        }
+      
     private static void crearEnunciado(ExamController controlador) {
 
         Boolean disponible = false;

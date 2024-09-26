@@ -27,8 +27,10 @@ public class DBConnection {
         // TODO Auto-generated method stub
         Connection con = null;
         try {
+
             String url = "jdbc:mysql://localhost:3306/examendb?serverTimezone=Europe/Madrid&useSSL=false";
             con = DriverManager.getConnection(url, "root", "abcd*1234");
+
         } catch (SQLException e) {
             //Logger.getLogger("DBConnection").severe(e.getLocalizedMessage());
             System.out.println("Error al intentar abrir la BD: " + e.getMessage());
@@ -43,6 +45,7 @@ public class DBConnection {
      * @param stmt
      * @param con
      */
+
     public void closeConnection(PreparedStatement stmt, Connection con) {
         try {
             if (stmt != null) {
