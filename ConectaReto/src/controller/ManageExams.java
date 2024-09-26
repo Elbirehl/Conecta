@@ -5,6 +5,7 @@
  */
 package controller;
 
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import model.Convocatoria;
@@ -27,10 +28,10 @@ public interface ManageExams {
 
     public ArrayList<String> consultarEnunciado(int id);
 
-    public Convocatoria consultarConvocatoria();
+    public ArrayList<Convocatoria> consultarConvocatoria( int enunciadoId);
 
     public ArrayList<Enunciado> visualizarDocEnunciado();
 
-    public Convocatoria asignarEnunciado();
+    public void asignarEnunciado(int seleccionConvocatoria, int enunciadoId);
 
 }

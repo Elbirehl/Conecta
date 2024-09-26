@@ -70,5 +70,4 @@ public class Convocatoria {
     public void setEnunciado(Enunciado enunciado) {
         this.enunciado = enunciado;
     }
-
 }

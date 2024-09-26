@@ -6,6 +6,8 @@
 package controller;
 
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,9 +15,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import model.Convocatoria;
 import model.Dificultad;
-import utilidades.Util;
 import model.Enunciado;
 import model.UnidadDidactica;
+import utilidades.Util;
 
 /**
  *
@@ -32,15 +34,35 @@ public class ExamController implements ManageExams {
     final String CREARUNIDAD = "INSERT INTO UnidadDidactica(acronimo, titulo, evaluacion, descripcion) VALUES (?,?,?,?)";
     //IRATI
     final String CREARCONVOCATORIA = "INSERT INTO ConvocatoriaExamen (convocatoria, descripcion, fecha, curso) VALUES (?,?,?,?)";
-    //OLAIA
-    final String ASIGNARENUNCIADOACONVOCATORIA = "UPDATE ConvocatoriaExamen SET enunciado_id = ? WHERE convocatoria=?";
-    final String CONSULTARCONVOCATORIA = "SELECT * FROM ConvocatoriaExamen WHERE enunciado_id = ?";
-    //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
+    //Inserta un nuevo enunciado en la tabla Enunciado. att:Elbire
+    final String CREARENUNCIADO = "INSERT INTO Enunciado (descripcion, nivel_dificultad, disponible, ruta) VALUES (?, ?, ?, ?)";
+    //Inserta una relación entre unidad didáctica y enunciado. att:Elbire
+    final String CREARUDENUNCIADO = "INSERT INTO UD_Enunciado (UD_id, enunciado_id) VALUES (?, ?)";
+    //Actualiza el enunciado de una convocatoria específica. att:Elbire
+    final String ACTUALIZACONVOCATORIA = "UPDATE ConvocatoriaExamen SET enunciado_id = ? WHERE convocatoria = ?";
+    //Lista todos los IDs y acrónimos de las unidades didácticas. att:Elbire
+    final String LISTARUDESPECIFICA = "SELECT id, acronimo FROM UnidadDidactica";
+    //Obtiene detalles de una unidad didáctica específica por ID. att:Elbire
+    final String OBTENERUDESPECIFICA = "SELECT * FROM UnidadDidactica WHERE id = ?";
+    //Lista todas las convocatorias de examen. att:Elbire
+    final String LISTARCONVOCATORIASTRING = "SELECT convocatoria FROM ConvocatoriaExamen";
+    //Obtiene los detalles de una convocatoria específica. att:Elbire
+    final String DETALLESCONVOCATORIA = "SELECT * FROM ConvocatoriaExamen WHERE convocatoria = ?";
+   //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
     final String CONSUTARENUNCIADOCONUDESPECIFICA = "SELECT descripcion FROM ENUNCIADO WHERE Id IN (SELECT ENUNCIADO_ID FROM UD_ENUNCIADO WHERE UD_ID = ?)";
     //Para mostrar todas las unidades didácticas att:Meylin
     final String MOSTRARUNIDADESDIDACTICAS = "SELECT * FROM UnidadDidactica";
     //Saber si hay unidades didacticas y cuantas att:Meylin
-    final String CONSULTARCANTIDADUNIDADESDIDACTICAS = "SELECT MAX(id) FROM UnidadDidactica";
+    final String CONSULTARCANTIDADUNIDADESDIDACTICAS = "SELECT MAX(id) FROM UnidadDidactica";  
+    //OLAIA
+    //Obtiene todos los detalles de una convocatoria por el id de un enunciado concreto.
+    final String CONSULTARCONVOCATORIASPORUNENUNCIADOCONCRETO = "SELECT * FROM ConvocatoriaExamen WHERE enunciado_id = ?";
+    //Actualiza las convocatorias con un enunciado asignado.
+    final String UPDATECONVOCATORIA = "UPDATE ConvocatoriaExamen SET enunciado_id = ? WHERE convocatoria = ?";
+    //Sleciona datos de las convocatorias que no tienen ningun enunciado asignado.
+    final String CONVOCATORIASINENUNCIADO = "SELECT convocatoria, descripcion, fecha, curso FROM ConvocatoriaExamen WHERE enunciado_id IS NULL";
+    //Seleciona el id y la descripcion de los enunciados.
+    final String SELECTENUNCIADO = "SELECT id, descripcion FROM Enunciado";
     //Mostrar todas las descripciones de los enunciados att:Meylin
     final String MOSTRARTODOSLOSENUNCIADOS = "SELECT id,descripcion,ruta FROM Enunciado;";
     //Saber si hay enunciados y cuantos att:Meylin
@@ -111,51 +133,196 @@ public class ExamController implements ManageExams {
     }
 
     @Override
+    public void asignarEnunciado(int seleccionConvocatoria, int enunciadoId) {
+        ArrayList<Convocatoria> convocatoriasSinEnunciado = new ArrayList<>();
+
+        try {
+            // Abrir conexión
+            con = conController.openConnection();
+
+            // 1. Consultar convocatorias sin enunciado asignado
+            String consultarConvocatoriasSinEnunciado = CONVOCATORIASINENUNCIADO;
+            stmt = con.prepareStatement(consultarConvocatoriasSinEnunciado);
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Añadir convocatorias sin enunciado a la lista
+            while (resultSet.next()) {
+                String convocatoriaNombre = resultSet.getString("convocatoria");
+                String descripcion = resultSet.getString("descripcion");
+                LocalDate fecha = resultSet.getDate("fecha").toLocalDate();
+                String curso = resultSet.getString("curso");
+
+                Convocatoria convocatoria = new Convocatoria(convocatoriaNombre, descripcion, fecha, curso, null);
+                convocatoriasSinEnunciado.add(convocatoria);
+            }
+
+            if (convocatoriasSinEnunciado.isEmpty()) {
+                return; // No hay convocatorias disponibles, salir.
+            }
+
+            // Obtener la convocatoria seleccionada por el usuario
+            Convocatoria convocatoriaSeleccionada = convocatoriasSinEnunciado.get(seleccionConvocatoria - 1);
+            String convocatoriaNombre = convocatoriaSeleccionada.getConvocatoria();
+
+            // 2. Consultar enunciados disponibles
+            stmt = con.prepareStatement(SELECTENUNCIADO);
+            resultSet = stmt.executeQuery();
+            ArrayList<Integer> enunciados = new ArrayList<>();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                enunciados.add(id);
+            }
+
+            if (enunciados.isEmpty()) {
+                return; // No hay enunciados disponibles, salir.
+            }
+
+            // Validar si el enunciado seleccionado es válido
+            if (!enunciados.contains(enunciadoId)) {
+                return; // El ID del enunciado no es válido, salir.
+            }
+
+            // 3. Asignar el enunciado a la convocatoria
+            stmt = con.prepareStatement(UPDATECONVOCATORIA);
+            stmt.setInt(1, enunciadoId); // Asignar enunciado_id
+            stmt.setString(2, convocatoriaNombre);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                // Actualizar el objeto convocatoria seleccionada
+                Enunciado enunciadoAsignado = new Enunciado(enunciadoId, "Descripción del enunciado", Dificultad.MEDIA, true, "ruta");
+                convocatoriaSeleccionada.setEnunciado(enunciadoAsignado);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejo de error
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                conController.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public ArrayList<Convocatoria> obtenerConvocatoriasSinEnunciado() {
+        ArrayList<Convocatoria> convocatoriasSinEnunciado = new ArrayList<>();
+
+        try {
+            // Abrir conexión
+            con = conController.openConnection();
+
+            // Consulta para obtener las convocatorias sin enunciado asignado
+            String consultarConvocatoriasSinEnunciado = CONVOCATORIASINENUNCIADO;
+            stmt = con.prepareStatement(consultarConvocatoriasSinEnunciado);
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Agregar las convocatorias a la lista
+            while (resultSet.next()) {
+                String convocatoriaNombre = resultSet.getString("convocatoria");
+                String descripcion = resultSet.getString("descripcion");
+                LocalDate fecha = resultSet.getDate("fecha").toLocalDate();
+                String curso = resultSet.getString("curso");
+
+                Convocatoria convocatoria = new Convocatoria(convocatoriaNombre, descripcion, fecha, curso, null);
+                convocatoriasSinEnunciado.add(convocatoria);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejo de error
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                conController.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return convocatoriasSinEnunciado; // Devolver la lista de convocatorias
+    }
+
+    public ArrayList<Enunciado> obtenerEnunciadosDisponibles() {
+        ArrayList<Enunciado> enunciadosDisponibles = new ArrayList<>();
+
+        try {
+            // Abrir conexión
+            con = conController.openConnection();
+
+            // Consulta para obtener los enunciados disponibles
+            String consultarEnunciadosDisponibles = SELECTENUNCIADO;
+            stmt = con.prepareStatement(consultarEnunciadosDisponibles);
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Agregar los enunciados a la lista
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String descripcion = resultSet.getString("descripcion");
+
+                // Crear objeto Enunciado con los datos de la BD
+                Enunciado enunciado = new Enunciado(id, descripcion, Dificultad.MEDIA, true, "ruta");  // Verificar que este constructor exista
+                enunciadosDisponibles.add(enunciado);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejo de error
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                conController.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return enunciadosDisponibles; // Devolver la lista de enunciados
+    }
+
+    @Override
     public Enunciado crearEnunciado(String desc, Dificultad dificultad, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias) {
         // Crear objeto Enunciado que será retornado al final
         Enunciado enunciado = null;
 
-        // Intentar abrir conexión con la base de datos
-        try (Connection conn = conController.getConnection()) {
+        try {
 
+            // Intentar abrir conexión con la base de datos
+            con = conController.openConnection();
             // 1. Insertar nuevo enunciado en la tabla Enunciado
-            String insertEnunciado = "INSERT INTO Enunciado (descripcion, nivel_dificultad, disponible, ruta) VALUES (?, ?, ?, ?)";
-            PreparedStatement ps = conn.prepareStatement(insertEnunciado, PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = con.prepareStatement(CREARENUNCIADO, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, desc);
             ps.setString(2, dificultad.toString().toLowerCase()); // Convierte la dificultad a minúsculas para la base de datos
             ps.setBoolean(3, disponible);
             ps.setString(4, ruta);
             ps.executeUpdate();
 
-            // Obtener el ID del enunciado insertado
             // 2. Obtener el ID del enunciado recién insertado
             rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 int enunciadoId = rs.getInt(1);
 
-                // 5. Asociar Unidades Didácticas con el enunciado
                 // 3. Asociar Unidades Didácticas con el enunciado
-                String insertUDEnunciado = "INSERT INTO UD_Enunciado (UD_id, enunciado_id) VALUES (?, ?)";
                 for (UnidadDidactica unidad : unidades) {
-                    PreparedStatement psUnidad = conn.prepareStatement(insertUDEnunciado);
-                    psUnidad.setInt(1, unidad.getId()); // Ajusta este método para obtener el ID de la unidad
+                    PreparedStatement psUnidad = con.prepareStatement(CREARUDENUNCIADO);
                     psUnidad.setInt(1, unidad.getId()); // Obtener el ID de la unidad didáctica
                     psUnidad.setInt(2, enunciadoId);
                     psUnidad.executeUpdate();
                 }
 
-                // 6. Asociar Convocatoria con el enunciado
                 // 4. Asociar Convocatorias con el enunciado
                 for (Convocatoria convocatoria : convocatorias) {
-                    String updateConvocatoria = "UPDATE ConvocatoriaExamen SET enunciado_id = ? WHERE convocatoria = ?";
-                    PreparedStatement psConvocatoria = conn.prepareStatement(updateConvocatoria);
+                    PreparedStatement psConvocatoria = con.prepareStatement(ACTUALIZACONVOCATORIA);
                     psConvocatoria.setInt(1, enunciadoId);
-                    psConvocatoria.setString(2, convocatoria.getConvocatoria()); // Ajusta este método para obtener la convocatoria
                     psConvocatoria.setString(2, convocatoria.getConvocatoria()); // Obtener la convocatoria por nombre
                     psConvocatoria.executeUpdate();
                 }
                 // 5. Crear el objeto Enunciado con la información disponible
-                enunciado = new Enunciado(desc, dificultad, disponible, ruta, unidades, convocatorias);
+                enunciado = new Enunciado(enunciadoId, desc, dificultad, disponible, ruta, unidades, convocatorias);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -191,8 +358,41 @@ public class ExamController implements ManageExams {
      * @return
      */
     @Override
-    public Convocatoria consultarConvocatoria() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<Convocatoria> consultarConvocatoria(int enunciadoId) {
+        ArrayList<Convocatoria> convocatorias = new ArrayList<>();
+
+        try {
+            con = conController.openConnection();
+            stmt = con.prepareStatement(CONSULTARCONVOCATORIASPORUNENUNCIADOCONCRETO);
+            stmt.setInt(1, enunciadoId);
+
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    String convocatoriaNombre = resultSet.getString("convocatoria");
+                    String descripcion = resultSet.getString("descripcion");
+                    LocalDate fecha = resultSet.getDate("fecha").toLocalDate();
+                    String curso = resultSet.getString("curso");
+
+                    // Crear el objeto Convocatoria
+                    Convocatoria convocatoria = new Convocatoria(convocatoriaNombre, descripcion, fecha, curso, null);
+                    convocatorias.add(convocatoria);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error de SQL al consultar las convocatorias.");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                conController.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return convocatorias;
     }
 
     @Override
@@ -236,13 +436,11 @@ public class ExamController implements ManageExams {
         UnidadDidactica unidadSeleccionada = null;
 
         // Intentar abrir conexión con la base de datos
-        try (Connection conn = conController.getConnection()) {
-
+        try {
+            con = conController.openConnection();
             // 1. Obtener lista de Unidades Didácticas
-            String query = "SELECT id, acronimo FROM UnidadDidactica";
-            PreparedStatement ps = conn.prepareStatement(query);
+            PreparedStatement ps = con.prepareStatement(LISTARUDESPECIFICA);
             rs = ps.executeQuery();
-
             // 2. Mostrar la lista de Unidades Didácticas disponibles
             System.out.println("Lista de Unidades Didácticas:");
             while (rs.next()) {
@@ -256,8 +454,7 @@ public class ExamController implements ManageExams {
             int idSeleccionado = Integer.parseInt(Util.introducirCadena()); // Convertir la entrada del usuario a entero
 
             // 4. Obtener detalles de la Unidad Didáctica seleccionada
-            String detalleQuery = "SELECT * FROM UnidadDidactica WHERE id = ?";
-            PreparedStatement psDetalle = conn.prepareStatement(detalleQuery);
+            PreparedStatement psDetalle = con.prepareStatement(OBTENERUDESPECIFICA);
             psDetalle.setInt(1, idSeleccionado);
             ResultSet rsDetalle = psDetalle.executeQuery();
 
@@ -284,41 +481,40 @@ public class ExamController implements ManageExams {
         Convocatoria convocatoriaSeleccionada = null;
 
         // Intentar abrir conexión con la base de datos
-        try (Connection conn = conController.getConnection()) {
+        try {
 
+            con = conController.openConnection();
             // 1. Consultar la lista de Convocatorias
-            String query = "SELECT convocatoria FROM ConvocatoriaExamen";
-            PreparedStatement ps = conn.prepareStatement(query);
+            PreparedStatement ps = con.prepareStatement(LISTARCONVOCATORIASTRING);
             rs = ps.executeQuery();
-
             ArrayList<String> convocatorias = new ArrayList<>();
             System.out.println("Lista de Convocatorias:");
+
             // 2. Mostrar la lista de Convocatorias disponibles
             int index = 1;
             while (rs.next()) {
                 String convocatoria = rs.getString("convocatoria");
-                System.out.println(convocatoria);
                 convocatorias.add(convocatoria);
                 System.out.println(index + ". " + convocatoria); // Mostrar número y convocatoria
                 index++;
             }
 
-            System.out.println("Introduce el nombre de la Convocatoria que quieres seleccionar:");
-            String convocatoriaSeleccionadaStr = Util.introducirCadena();
             // 3. Solicitar al usuario que seleccione una convocatoria por número
             System.out.println("Introduce el número de la Convocatoria que quieres seleccionar:");
             int seleccion = Util.leerInt(); // Leer la selección del usuario
 
-            // Obtener detalles de la convocatoria seleccionada
             // 4. Validar la selección del usuario
             if (seleccion < 1 || seleccion > convocatorias.size()) {
                 System.out.println("¡Error! Selección inválida.");
                 return null;
             }
+
             // 5. Obtener la convocatoria seleccionada por el usuario
+            String convocatoriaSeleccionadaStr = convocatorias.get(seleccion - 1);
+
             // 6. Consultar los detalles de la convocatoria seleccionada
             String detalleQuery = "SELECT * FROM ConvocatoriaExamen WHERE convocatoria = ?";
-            PreparedStatement psDetalle = conn.prepareStatement(detalleQuery);
+            PreparedStatement psDetalle = con.prepareStatement(DETALLESCONVOCATORIA);
             psDetalle.setString(1, convocatoriaSeleccionadaStr);
             ResultSet rsDetalle = psDetalle.executeQuery();
 
@@ -328,7 +524,7 @@ public class ExamController implements ManageExams {
                 LocalDate fecha = rsDetalle.getDate("fecha").toLocalDate();
                 String curso = rsDetalle.getString("curso");
                 int enunciadoId = rsDetalle.getInt("enunciado_id");
-                Enunciado enunciado = null; // Puedes implementar la obtención de detalles del enunciado si es necesario
+                Enunciado enunciado = null;
                 convocatoriaSeleccionada = new Convocatoria(convocatoriaSeleccionadaStr, descripcion, fecha, curso, enunciado);
             } else {
                 System.out.println("¡Error! Convocatoria no encontrada.");
@@ -404,6 +600,7 @@ public class ExamController implements ManageExams {
             stmt.close();
         } catch (SQLException e) {
             System.out.println("Error al obtener los enunciados " + e.getMessage());
+
         }
         conController.closeConnection(stmt, con);
         return cantidad;

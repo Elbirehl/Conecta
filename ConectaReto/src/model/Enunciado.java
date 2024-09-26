@@ -35,7 +35,8 @@ public class Enunciado {
      * @param convocatorias Lista de convocatorias en las que el enunciado ha
      * sido utilizado.
      */
-    public Enunciado(String descripcion, Dificultad nivel, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias) {
+    public Enunciado(int enunciadoId, String descripcion, Dificultad nivel, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias) {
+        this.id = enunciadoId;
         this.descripcion = descripcion;
         this.nivel = nivel;
         this.disponible = disponible;
@@ -48,8 +49,19 @@ public class Enunciado {
      * Constructor vacío que inicializa el objeto Enunciado sin datos.
      */
     public Enunciado() {
-    }
+      }
 
+
+    public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta) {
+        this.id = id;
+        this.descripcion = descripcion;
+        this.nivel = nivel;
+        this.disponible = disponible;
+        this.ruta = ruta;
+        this.unidades = new ArrayList<>(); // Inicializar las listas vacías
+        this.convocatorias = new ArrayList<>();
+    }
+    
     public Enunciado(int enunciadoId, String descripción_del_enunciado, Dificultad dificultad, boolean b, String ruta) {
         this.id = enunciadoId;
         this.descripcion = descripción_del_enunciado;
