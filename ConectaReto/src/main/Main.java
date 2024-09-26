@@ -350,31 +350,34 @@ public class Main {
             });
             System.out.println("\nIntroduce el ID del enunciado que desea visualizar: ");
             id = Util.leerInt(1, cantidadEnunciados);
-            for (int i = 0; i < enunciados.size() && !encontrado; i++) {
-                if (enunciados.get(i).getId() == id) {
-                    encontrado = true;
-                    String directorioTrabajo = System.getProperty("user.dir");
-                    filePath = enunciados.get(i).getRuta();
-                    File file = new File(directorioTrabajo + "\\" + filePath);
-                    if (!file.exists()) {
-                        System.out.println("El archivo no existe en la ruta especificada.");
-                    }
-                    if (Desktop.isDesktopSupported()) {
-                        Desktop desktop = Desktop.getDesktop();
-                        try {
-                            // Comprobar si la operación de abrir está soportada
-                            if (desktop.isSupported(Desktop.Action.OPEN)) {
-                                desktop.open(file); // Abre el archivo
-                            } else {
-                                System.out.println("La acción de abrir no está soportada en este entorno.");
+
+            try {
+                for (int i = 0; i < enunciados.size() && !encontrado; i++) {
+                    if (enunciados.get(i).getId() == id) {
+                        encontrado = true;
+                        String directorioTrabajo = System.getProperty("user.dir");
+                        filePath = enunciados.get(i).getRuta();
+                        File file = new File(directorioTrabajo + "\\" + filePath);
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop desktop = Desktop.getDesktop();
+                            try {
+                                // Comprobar si la operación de abrir está soportada
+                                if (desktop.isSupported(Desktop.Action.OPEN)) {
+                                    desktop.open(file); // Abre el archivo
+                                } else {
+                                    System.out.println("La acción de abrir no está soportada en este entorno.");
+                                }
+                            } catch (IOException e) {
+                                System.out.println(e.getMessage());
                             }
-                        } catch (IOException e) {
-                            System.out.println(e.getMessage());
+                        } else {
+                            System.out.println("La clase Desktop no es soportada en este entorno.");
                         }
-                    } else {
-                        System.out.println("La clase Desktop no es soportada en este entorno.");
                     }
                 }
+            } catch (java.lang.IllegalArgumentException e) {
+                System.out.println("El archivo no existe en la ruta especificada.");
+
             }
         }
     }
