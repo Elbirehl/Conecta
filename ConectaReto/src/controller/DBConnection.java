@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -20,6 +21,8 @@ public class DBConnection {
 
     /**
      * Abre una conexion con la base de datos.
+     *
+     * @return
      */
     public Connection openConnection() {
         // TODO Auto-generated method stub
@@ -38,17 +41,21 @@ public class DBConnection {
     /**
      * Cierra la conexion con la base de datos.
      *
+     * @param stmt
+     * @param con
      * @throws SQLException si ocurre un error al cerrar la conexión
      */
-    public void closeConnection(PreparedStatement stmt, Connection con) throws SQLException {
-        System.out.println("Conexion cerrada");
-        if (stmt != null) {
-            stmt.close();
+    public void closeConnection(PreparedStatement stmt, Connection con) {
+        try {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (con != null) {
-            con.close();
-        }
-        System.out.println("--------------------");
     }
 
 }

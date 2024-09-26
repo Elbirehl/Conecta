@@ -32,9 +32,19 @@ public class Enunciado {
     }
 
     public Enunciado() {
+      }
+
+    public Enunciado(int id, String descripcion, Dificultad nivel, boolean disponible, String ruta) {
+        this.id = id;
+        this.descripcion = descripcion;
+        this.nivel = nivel;
+        this.disponible = disponible;
+        this.ruta = ruta;
+        this.unidades = new ArrayList<>(); // Inicializar las listas vacías
+        this.convocatorias = new ArrayList<>();
     }
-
-
+    
+    
     public int getId() {
         return id;
     }
