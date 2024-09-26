@@ -1,7 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Clase que representa una Unidad Didáctica, con atributos como el acrónimo, título, evaluación,
+ * descripción, y una lista de enunciados relacionados.
  */
 package model;
 
@@ -20,6 +19,16 @@ public class UnidadDidactica {
     private String descripcion;
     private ArrayList<Enunciado> enunciados;
 
+    /**
+     * Constructor completo para crear una Unidad Didáctica.
+     *
+     * @param id El identificador único de la unidad.
+     * @param acronimo El acrónimo de la unidad.
+     * @param titulo El título de la unidad.
+     * @param evaluacion El tipo de evaluación de la unidad.
+     * @param descripcion La descripción de la unidad.
+     * @param enunciados La lista de enunciados asociados a la unidad.
+     */
     public UnidadDidactica(int id, String acronimo, String titulo, String evaluacion, String descripcion, ArrayList<Enunciado> enunciados) {
         this.id = id;
         this.acronimo = acronimo;

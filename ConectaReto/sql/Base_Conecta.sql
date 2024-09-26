@@ -1,4 +1,40 @@
+DROP DATABASE IF EXISTS examendb;
+CREATE DATABASE IF NOT EXISTS examendb;
 USE examendb;
+
+CREATE TABLE IF NOT EXISTS UnidadDidactica (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    acronimo VARCHAR(50) NOT NULL,
+    titulo VARCHAR(100) NOT NULL,
+    evaluacion TEXT NOT NULL,
+    descripcion TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Enunciado (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion TEXT NOT NULL,
+    nivel_dificultad ENUM('baja', 'media', 'alta') NOT NULL,
+    disponible BOOLEAN NOT NULL DEFAULT TRUE,
+    ruta TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ConvocatoriaExamen (
+    convocatoria VARCHAR(50) NOT NULL PRIMARY KEY,
+    descripcion TEXT NOT NULL,
+    fecha DATE NOT NULL,
+    curso VARCHAR(50) NOT NULL,
+    enunciado_id INT NULL,
+    FOREIGN KEY (enunciado_id) REFERENCES Enunciado(id) ON DELETE CASCADE
+);
+
+CREATE TABLE UD_Enunciado (
+UD_id INT NOT NULL,
+enunciado_id INT NOT NULL,
+FOREIGN KEY (enunciado_id) REFERENCES Enunciado(id) ON DELETE CASCADE,
+FOREIGN KEY (UD_id) REFERENCES UnidadDidactica(id) ON DELETE CASCADE,
+PRIMARY KEY (UD_id, enunciado_id)
+);
+
 
 INSERT INTO UnidadDidactica (acronimo, titulo, evaluacion, descripcion) 
 VALUES
@@ -19,7 +55,10 @@ VALUES
 ('Primera Convocatoria 2024', 'Examen de introducción a SQL para evaluar conocimientos básicos.', '2024-03-15', 'Curso de SQL Básico', 1),
 ('Segunda Convocatoria 2024', 'Evaluación sobre modelado de datos con enfoque en diagramas ER.', '2024-06-10', 'Curso de Modelado de Datos', 2),
 ('Convocatoria Extraordinaria 2024', 'Examen práctico sobre administración de bases de datos.', '2024-09-20', 'Curso de Administración de Bases de Datos', 3),
-('Primera Convocatoria Avanzada 2024', 'Evaluación de técnicas avanzadas en desarrollo de aplicaciones SQL.', '2024-11-05', 'Curso de Desarrollo Avanzado con SQL', 4);
+('Primera Convocatoria Avanzada 2024', 'Evaluación de técnicas avanzadas en desarrollo de aplicaciones SQL.', '2024-11-05', 'Curso de Desarrollo Avanzado con SQL', 4),
+('Convocatoria Septiembre', 'Convocatoria final de septiembre', '2024-09-01', 'Curso 2023-2024', NULL),
+('Convocatoria Diciembre', 'Convocatoria extraordinaria de diciembre', '2024-12-15', 'Curso 2023-2024', NULL),
+('Convocatoria Marzo', 'Convocatoria de recuperación en marzo', '2024-03-20', 'Curso 2023-2024', NULL);
 
 INSERT INTO UD_Enunciado (UD_id, enunciado_id) VALUES
 (1, 1),  

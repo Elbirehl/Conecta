@@ -5,7 +5,6 @@
  */
 package controller;
 
-import static com.mysql.cj.conf.PropertyKey.logger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -28,8 +27,10 @@ public class DBConnection {
         // TODO Auto-generated method stub
         Connection con = null;
         try {
+
             String url = "jdbc:mysql://localhost:3306/examendb?serverTimezone=Europe/Madrid&useSSL=false";
             con = DriverManager.getConnection(url, "root", "abcd*1234");
+
         } catch (SQLException e) {
             //Logger.getLogger("DBConnection").severe(e.getLocalizedMessage());
             System.out.println("Error al intentar abrir la BD: " + e.getMessage());
@@ -43,7 +44,6 @@ public class DBConnection {
      *
      * @param stmt
      * @param con
-     * @throws SQLException si ocurre un error al cerrar la conexión
      */
     public void closeConnection(PreparedStatement stmt, Connection con) {
         try {
