@@ -9,20 +9,29 @@ import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import model.Convocatoria;
+import model.Dificultad;
 import model.Enunciado;
 import model.UnidadDidactica;
+
 
 /**
  *
  * @author 2dam
  */
 public interface ManageExams {
-    public UnidadDidactica crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion);
-    public Convocatoria crearConvocatoria (String convocatoria, String descripcion, LocalDate fecha, String curso);
-    public Enunciado crearEnunciado();
-    public Enunciado consultarEnunciado();
+
+    public boolean crearUnidad(String acronimo, String titulo, String evaluacion, String descripcion);
+
+    public boolean crearConvocatoria(String convocatoria, String descripcion, LocalDate fecha, String curso, int enunciadoId);
+
+    public Enunciado crearEnunciado(String desc, Dificultad dificultad, boolean disponible, String ruta, ArrayList<UnidadDidactica> unidades, ArrayList<Convocatoria> convocatorias);
+
+    public ArrayList<String> consultarEnunciado(int id);
+
     public ArrayList<Convocatoria> consultarConvocatoria( int enunciadoId);
-    public Enunciado visualizarDocEnunciado();
+
+    public ArrayList<Enunciado> visualizarDocEnunciado();
+
     public void asignarEnunciado(int seleccionConvocatoria, int enunciadoId);
-    
+
 }

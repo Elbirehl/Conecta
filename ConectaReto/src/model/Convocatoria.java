@@ -13,7 +13,6 @@ import java.time.LocalDate;
  */
 public class Convocatoria {
 
-    
     private String convocatoria;
     private String descripcion;
     private LocalDate fecha;
@@ -26,6 +25,10 @@ public class Convocatoria {
         this.fecha = fecha;
         this.curso = curso;
         this.enunciado = enunciado;
+    }
+
+    public Convocatoria(String string, String string0, LocalDate toLocalDate, String string1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public String getConvocatoria() {
@@ -67,12 +70,4 @@ public class Convocatoria {
     public void setEnunciado(Enunciado enunciado) {
         this.enunciado = enunciado;
     }
-
-    public Object getEnunciados() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-  
-    
-    
 }
