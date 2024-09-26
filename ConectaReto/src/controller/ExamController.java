@@ -47,9 +47,13 @@ public class ExamController implements ManageExams {
     //Obtiene los detalles de una convocatoria específica. att:Elbire
     final String DETALLESCONVOCATORIA = "SELECT * FROM ConvocatoriaExamen WHERE convocatoria = ?";
     //OLAIA
+    //Obtiene todos los detalles de una convocatoria por el id de un enunciado concreto.
     final String CONSULTARCONVOCATORIASPORUNENUNCIADOCONCRETO = "SELECT * FROM ConvocatoriaExamen WHERE enunciado_id = ?";
+    //Actualiza las convocatorias con un enunciado asignado.
     final String UPDATECONVOCATORIA = "UPDATE ConvocatoriaExamen SET enunciado_id = ? WHERE convocatoria = ?";
+    //Sleciona datos de las convocatorias que no tienen ningun enunciado asignado.
     final String CONVOCATORIASINENUNCIADO = "SELECT convocatoria, descripcion, fecha, curso FROM ConvocatoriaExamen WHERE enunciado_id IS NULL";
+    //Seleciona el id y la descripcion de los enunciados.
     final String SELECTENUNCIADO = "SELECT id, descripcion FROM Enunciado";
     //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
     final String CONSUTARENUNCIADOCONUDESPECIFICA = "SELECT descripcion FROM ENUNCIADO WHERE Id IN (SELECT ENUNCIADO_ID FROM UD_ENUNCIADO WHERE UD_ID = ?)";
