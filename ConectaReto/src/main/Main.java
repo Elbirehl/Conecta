@@ -130,13 +130,14 @@ public class Main {
 
     private static void crearConvocatoria(ExamController controlador) {
 
-        System.out.println("Introduce el el nombre de la convocatoria:");
+        System.out.println("Introduce el el nombre de la convocatoria (Ordinaria o Extraordinaria):");
         String convocatoria = Util.introducirCadena();
+
+        // Validar que la evaluación no esté vacía y sea una de las opciones válidas
         while (convocatoria.isEmpty()) {
             System.out.println("El nombre de la convocatoria no puede estar vacío.");
             convocatoria = Util.introducirCadena();
         }
-
         System.out.println("Introduce la descripción de la convocatoria:");
         String descripcion = Util.introducirCadena();
         while (descripcion.isEmpty()) {
@@ -144,7 +145,7 @@ public class Main {
             descripcion = Util.introducirCadena();
         }
 
-        System.out.println("Introduce la fecha de la convocatoria:");
+        System.out.println("Introduce la fecha de la convocatoria con formato (yyyy/mm/dd):");
         LocalDate fecha = Util.leerFechaAMD();
 
         System.out.println("Introduce el curso:");
