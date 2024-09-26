@@ -610,4 +610,36 @@ public class ExamController implements ManageExams {
         }
         return false; // Retorna falso si no existe
     }
+
+    public ArrayList<String> convocatoriasExistente() {
+        ArrayList<String> convocatorias = new ArrayList<>();
+        con = conController.openConnection();
+
+        // Intentar abrir conexión con la base de datos
+        try {
+            // 1. Consultar la lista de Convocatorias
+            stmt = con.prepareStatement(LISTARCONVOCATORIASTRING);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String convocatoria = rs.getString("convocatoria");
+                convocatorias.add(convocatoria);
+
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al consultar las convocatorias: " + e.getMessage()); // Manejar errores de SQL
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                conController.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        return convocatorias; // Devolver la lista de convocatorias
+    }
+
 }

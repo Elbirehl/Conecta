@@ -179,15 +179,27 @@ public class Main {
     }
 
     private static void crearConvocatoria(ExamController controlador) {
-
-        System.out.println("Introduce el el nombre de la convocatoria (Ordinaria o Extraordinaria):");
+        // Mostrar las convocatorias existentes
+        ArrayList<String> convocatoriasExistentes = controlador.convocatoriasExistente();
+        System.out.println("*** Convocatorias existentes ***");
+        System.out.println("");
+        for (String c : convocatoriasExistentes) {
+            System.out.println("- " + c);
+        }
+        System.out.println("");
+        System.out.println("Introduce el nombre de la convocatoria nueva que quieras añadir:");
         String convocatoria = Util.introducirCadena();
 
-        // Validar que la evaluación no esté vacía y sea una de las opciones válidas
-        while (convocatoria.isEmpty()) {
-            System.out.println("El nombre de la convocatoria no puede estar vacío.");
+        // Validar que la evaluación no esté vacía y que no exista ya
+        while (convocatoria.isEmpty() || convocatoriasExistentes.contains(convocatoria)) {
+            if (convocatoria.isEmpty()) {
+                System.out.println("El nombre de la convocatoria no puede estar vacío.");
+            } else {
+                System.out.println("Ya existe una convocatoria con el nombre: " + convocatoria+". Inténtalo de nuevo:");
+            }
             convocatoria = Util.introducirCadena();
         }
+
         System.out.println("Introduce la descripción de la convocatoria:");
         String descripcion = Util.introducirCadena();
         while (descripcion.isEmpty()) {
