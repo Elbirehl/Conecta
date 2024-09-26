@@ -31,7 +31,7 @@ public class ExamController implements ManageExams {
     //IRATI
     final String CREARUNIDAD = "INSERT INTO UnidadDidactica(acronimo, titulo, evaluacion, descripcion) VALUES (?,?,?,?)";
     //IRATI
-    final String CREARCONVOCATORIA = "INSERT INTO ConvocatoriaExamen (convocatoria, descripcion, fecha, curso, enunciado_id) VALUES (?,?,?,?,?)";
+    final String CREARCONVOCATORIA = "INSERT INTO ConvocatoriaExamen (convocatoria, descripcion, fecha, curso) VALUES (?,?,?,?)";
     //OLAIA
     final String ASIGNARENUNCIADOACONVOCATORIA = "UPDATE ConvocatoriaExamen SET enunciado_id = ? WHERE convocatoria=?";
     final String CONSULTARCONVOCATORIA = "SELECT * FROM ConvocatoriaExamen WHERE enunciado_id = ?";
