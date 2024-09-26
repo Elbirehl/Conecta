@@ -1,7 +1,5 @@
 package main;
 
-import controller.DBConnection;
-import java.sql.Connection;
 import model.Convocatoria;
 import model.Dificultad;
 import controller.ExamController;
@@ -237,7 +235,7 @@ public class Main {
         // Solicita la ruta del enunciado
         System.out.println("Introduce la ruta del enunciado");
         String ruta = Util.introducirCadena();
-
+        String rutaEntera = "enunciados/" + ruta + ".docx";
         // Pregunta si el enunciado está disponible
         System.out.println("¿Está disponible? Si/No ");
         String disponibleS = Util.introducirCadena();
@@ -295,7 +293,7 @@ public class Main {
         } while (!terminado);
 
         // Crea el enunciado en la base de datos
-        controlador.crearEnunciado(desc, dificultad, true, ruta, unidades, convocatorias);
+        controlador.crearEnunciado(desc, dificultad, disponible, rutaEntera, unidades, convocatorias);
     }
 
     private static void ConsultarEnunciado(ExamController controlador) {
@@ -341,7 +339,7 @@ public class Main {
         ArrayList<Enunciado> enunciados;
         int cantidadEnunciados = controlador.consultarCantidadEnunciados();
         if (cantidadEnunciados == 0) {
-            System.out.println("Actualmente no hay unidades didacticas");
+            System.out.println("Actualmente no hay unidades enunciados");
         } else {
             enunciados = controlador.visualizarDocEnunciado();
             System.out.println("\t\tENUNCIADOS:");
@@ -351,15 +349,12 @@ public class Main {
                         + "\nDESCRIPCION: " + enunciado.getDescripcion());
             });
             System.out.println("\nIntroduce el ID del enunciado que desea visualizar: ");
-            System.out.println(cantidadEnunciados);
             id = Util.leerInt(1, cantidadEnunciados);
             for (int i = 0; i < enunciados.size() && !encontrado; i++) {
                 if (enunciados.get(i).getId() == id) {
                     encontrado = true;
                     String directorioTrabajo = System.getProperty("user.dir");
-                    System.out.println(directorioTrabajo);
                     filePath = enunciados.get(i).getRuta();
-                    System.out.println(filePath);
                     File file = new File(directorioTrabajo + "\\" + filePath);
                     if (!file.exists()) {
                         System.out.println("El archivo no existe en la ruta especificada.");
