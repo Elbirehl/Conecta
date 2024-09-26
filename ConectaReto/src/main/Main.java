@@ -48,13 +48,13 @@ public class Main {
                     ConsultarEnunciado(controlador);
                     break;
                 case 5:
-                    controlador.consultarConvocatoria();
+                    consultarConvocatoria(controlador);
                     break;
                 case 6:
                     cvisualizarDocEnunciado(controlador);
                     break;
                 case 7:
-                    controlador.asignarEnunciado();
+                    asignarEnunciado(controlador);
                     break;
                 case 8:
                     System.out.println("Gracias por usar nuestro programa.\nSaliendo...");
@@ -117,6 +117,7 @@ public class Main {
 
     // 3. Asignar el enunciado seleccionado a la convocatoria
     controlador.asignarEnunciado(seleccionConvocatoria, enunciadoId);
+   }
 
     private static void crearEnunciado(ExamController controlador) {
 
@@ -312,4 +313,3 @@ public class Main {
         }
 
     }*/
-    }

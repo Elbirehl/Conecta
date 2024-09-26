@@ -243,44 +243,40 @@ public class ExamController implements ManageExams {
     }
 
     public ArrayList<Enunciado> obtenerEnunciadosDisponibles() {
-    ArrayList<Enunciado> enunciadosDisponibles = new ArrayList<>();
+        ArrayList<Enunciado> enunciadosDisponibles = new ArrayList<>();
 
-    try {
-        // Abrir conexión
-        con = conController.openConnection();
-
-        // Consulta para obtener los enunciados disponibles
-        String consultarEnunciadosDisponibles = SELECTENUNCIADO;
-        stmt = con.prepareStatement(consultarEnunciadosDisponibles);
-        ResultSet resultSet = stmt.executeQuery();
-
-        // Agregar los enunciados a la lista
-        while (resultSet.next()) {
-            int id = resultSet.getInt("id");
-            String descripcion = resultSet.getString("descripcion");
-
-            // Crear objeto Enunciado con los datos de la BD
-            Enunciado enunciado = new Enunciado(id, descripcion, Dificultad.MEDIA, true, "ruta");  // Verificar que este constructor exista
-            enunciadosDisponibles.add(enunciado);
-        }
-
-    } catch (SQLException e) {
-        e.printStackTrace(); // Manejo de error
-    } finally {
         try {
-            if (stmt != null) {
-                stmt.close();
+            // Abrir conexión
+            con = conController.openConnection();
+
+            // Consulta para obtener los enunciados disponibles
+            String consultarEnunciadosDisponibles = SELECTENUNCIADO;
+            stmt = con.prepareStatement(consultarEnunciadosDisponibles);
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Agregar los enunciados a la lista
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String descripcion = resultSet.getString("descripcion");
+
+                // Crear objeto Enunciado con los datos de la BD
+                Enunciado enunciado = new Enunciado(id, descripcion, Dificultad.MEDIA, true, "ruta");  // Verificar que este constructor exista
+                enunciadosDisponibles.add(enunciado);
             }
-          conController.closeConnection(stmt, con);
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Manejo de error
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                conController.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-    }
-    return enunciadosDisponibles; // Devolver la lista de enunciados
-}  
-            
-=======
-        return creado;
+        return enunciadosDisponibles; // Devolver la lista de enunciados
     }
 
     @Override
@@ -346,18 +342,23 @@ public class ExamController implements ManageExams {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if(stmt!=null){
+                    stmt.close();
+                }
+                conController.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                System.out.println("Error en el cierre de la Base de Datos");
+                e.printStackTrace();
+            }
         }
-        try {
-            conController.closeConnection(stmt, con);
-        } catch (SQLException e) {
-            System.out.println("Error en el cierre de la Base de Datos");
-            e.printStackTrace();
-        }
+
         return enunciado;
     }
 
     //OLAIA
-     @Override
+    @Override
     public ArrayList<Convocatoria> consultarConvocatoria(int enunciadoId) {
         ArrayList<Convocatoria> convocatorias = new ArrayList<>();
 
@@ -380,7 +381,7 @@ public class ExamController implements ManageExams {
             }
         } catch (SQLException e) {
             System.out.println("Error de SQL al consultar las convocatorias.");
-           e.printStackTrace();
+            e.printStackTrace();
         } finally {
             try {
                 if (stmt != null) {
@@ -414,12 +415,17 @@ public class ExamController implements ManageExams {
             stmt.close();
         } catch (SQLException e) {
             System.out.println("Error al obtener los Enunciados: " + e.getMessage());
-        }
-        try {
+        }finally{
+            try {
+            if(stmt!=null){
+                    stmt.close();
+                }
             conController.closeConnection(stmt, con);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        }
+        
         return enunciados;
     }
 
@@ -554,12 +560,17 @@ public class ExamController implements ManageExams {
             stmt.close();
         } catch (SQLException e) {
             System.out.println("Error al obtener las unidades didácticas: " + e.getMessage());
-        }
-        try {
+        }finally{
+            try {
+            if(stmt!=null){
+                    stmt.close();
+                }
             conController.closeConnection(stmt, con);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        }
+        
         return unidadesDidacticas;
     }
 
@@ -579,12 +590,17 @@ public class ExamController implements ManageExams {
             stmt.close();
         } catch (SQLException e) {
             System.out.println("Error al obtener las unidades didácticas: " + e.getMessage());
-        }
-        try {
+        }finally{
+            try {
+            if(stmt!=null){
+                    stmt.close();
+                }
             conController.closeConnection(stmt, con);
         } catch (SQLException e) {
             e.printStackTrace();
-        } 
+        }
+        }
+        
         return cantidad;
     }
 
@@ -604,12 +620,17 @@ public class ExamController implements ManageExams {
             stmt.close();
         } catch (SQLException e) {
             System.out.println("Error al obtener los enunciados " + e.getMessage());
-        }
-        try {
+        }finally{
+            try {
+            if(stmt!=null){
+                    stmt.close();
+                }
             conController.closeConnection(stmt, con);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        }
+        
         return cantidad;
     }
 }
