@@ -62,13 +62,13 @@ public class Enunciado {
         this.convocatorias = new ArrayList<>();
     }
     
-    public Enunciado(int enunciadoId, String descripción_del_enunciado, Dificultad dificultad, boolean b, String ruta) {
+    /*public Enunciado(int enunciadoId, String descripción_del_enunciado, Dificultad dificultad, boolean b, String ruta) {
         this.id = enunciadoId;
         this.descripcion = descripción_del_enunciado;
         this.nivel = dificultad;
         this.disponible = b;
         this.ruta = ruta;
-    }
+    }*/
 
     /**
      * @return id

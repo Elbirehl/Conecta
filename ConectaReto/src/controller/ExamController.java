@@ -48,12 +48,12 @@ public class ExamController implements ManageExams {
     final String LISTARCONVOCATORIASTRING = "SELECT convocatoria FROM ConvocatoriaExamen";
     //Obtiene los detalles de una convocatoria específica. att:Elbire
     final String DETALLESCONVOCATORIA = "SELECT * FROM ConvocatoriaExamen WHERE convocatoria = ?";
-   //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
+    //Para mostrar los enunciados que pertenecen a una unidad didactica att:Meylin
     final String CONSUTARENUNCIADOCONUDESPECIFICA = "SELECT descripcion FROM ENUNCIADO WHERE Id IN (SELECT ENUNCIADO_ID FROM UD_ENUNCIADO WHERE UD_ID = ?)";
     //Para mostrar todas las unidades didácticas att:Meylin
     final String MOSTRARUNIDADESDIDACTICAS = "SELECT * FROM UnidadDidactica";
     //Saber si hay unidades didacticas y cuantas att:Meylin
-    final String CONSULTARCANTIDADUNIDADESDIDACTICAS = "SELECT MAX(id) FROM UnidadDidactica";  
+    final String CONSULTARCANTIDADUNIDADESDIDACTICAS = "SELECT MAX(id) FROM UnidadDidactica";
     //OLAIA
     //Obtiene todos los detalles de una convocatoria por el id de un enunciado concreto.
     final String CONSULTARCONVOCATORIASPORUNENUNCIADOCONCRETO = "SELECT * FROM ConvocatoriaExamen WHERE enunciado_id = ?";
@@ -425,11 +425,6 @@ public class ExamController implements ManageExams {
      *
      * @return
      */
-    @Override
-    public Convocatoria asignarEnunciado() {
-        return null;
-    }
-
     //METODOS EXTRA DE ELBIRE
     public UnidadDidactica mostrarUnidadDidactica() {
 
