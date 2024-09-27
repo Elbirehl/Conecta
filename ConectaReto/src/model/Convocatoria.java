@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 /**
  *
- * @author 2dam
+ * @author Irati, Meylin, Elbire y Olaia
  */
 public class Convocatoria {
 

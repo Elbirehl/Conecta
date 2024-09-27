@@ -16,7 +16,7 @@ import model.UnidadDidactica;
 
 /**
  *
- * @author 2dam
+ * @author Irati, Meylin, Elbire y Olaia
  */
 public interface ManageExams {
 
@@ -28,7 +28,7 @@ public interface ManageExams {
 
     public ArrayList<String> consultarEnunciado(int id);
 
-    public ArrayList<Convocatoria> consultarConvocatoria( int enunciadoId);
+    public ArrayList<Convocatoria> consultarConvocatoria(int enunciadoId);
 
     public ArrayList<Enunciado> visualizarDocEnunciado();
 

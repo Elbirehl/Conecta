@@ -14,7 +14,7 @@ import utilidades.Util;
 
 /**
  *
- * @author 2dam
+ * @author Irati, Meylin, Elbire y Olaia
  */
 public class Main {
 
@@ -29,7 +29,7 @@ public class Main {
                     + "\n\t1.Crear unidad didáctica."
                     + "\n\t2.Crear convocatoria."
                     + "\n\t3.Crear enunciado."
-                    + "\n\t4.Consultar enunciado por unidad uidáctica."
+                    + "\n\t4.Consultar enunciado por unidad didáctica."
                     + "\n\t5.Consultar convocatoria por enunciado."
                     + "\n\t6.Visualizar la descripcion de un enunciado."
                     + "\n\t7.Asignar un enunciado a una convocatoria."
@@ -52,7 +52,7 @@ public class Main {
                     consultarConvocatoria(controlador);
                     break;
                 case 6:
-                    cvisualizarDocEnunciado(controlador);
+                    visualizarDocEnunciado(controlador);
                     break;
                 case 7:
                     asignarEnunciado(controlador);
@@ -62,62 +62,6 @@ public class Main {
                     break;
             }
         } while (menu != 8);
-    }
-
-    private static void consultarConvocatoria(ExamController controlador) {
-        System.out.println("Introduce el ID del enunciado para consultar sus convocatorias:");
-        int enunciadoId = Util.leerInt();
-
-        // Call the consultarConvocatoria method
-        ArrayList<Convocatoria> convocatorias = controlador.consultarConvocatoria(enunciadoId);
-
-        // Check if any convocatorias were found
-        if (convocatorias.isEmpty()) {
-            System.out.println("No se encontraron convocatorias para el enunciado con ID: " + enunciadoId);
-        } else {
-            System.out.println("Convocatorias encontradas:");
-            for (Convocatoria convocatoria : convocatorias) {
-                System.out.println("Nombre: " + convocatoria.getConvocatoria()
-                        + ", Descripción: " + convocatoria.getDescripcion()
-                        + ", Fecha: " + convocatoria.getFecha()
-                        + ", Curso: " + convocatoria.getCurso());
-            }
-        }
-    }
-
-    private static void asignarEnunciado(ExamController controlador) {
-        ArrayList<Convocatoria> convocatoriasSinEnunciado = controlador.obtenerConvocatoriasSinEnunciado();
-
-        if (convocatoriasSinEnunciado.isEmpty()) {
-            System.out.println("No hay convocatorias sin enunciado.");
-            return;
-        }
-
-        // 1. Mostrar las convocatorias al usuario
-        System.out.println("Selecciona el número de la convocatoria a la que quieres asignar un enunciado:");
-        for (int i = 0; i < convocatoriasSinEnunciado.size(); i++) {
-            System.out.println((i + 1) + ". " + convocatoriasSinEnunciado.get(i).getConvocatoria());
-        }
-        int seleccionConvocatoria = Util.leerInt(1, convocatoriasSinEnunciado.size());
-
-        // 2. Mostrar los enunciados disponibles al usuario
-        ArrayList<Enunciado> enunciadosDisponibles = controlador.obtenerEnunciadosDisponibles();
-
-        if (enunciadosDisponibles.isEmpty()) {
-            System.out.println("No hay enunciados disponibles para asignar.");
-            return;
-        }
-
-        System.out.println("Enunciados disponibles:");
-        for (Enunciado enunciado : enunciadosDisponibles) {
-            System.out.println("ID: " + enunciado.getId() + " - Descripción: " + enunciado.getDescripcion());
-        }
-
-        System.out.println("Introduce el ID del enunciado que deseas asignar:");
-        int enunciadoId = Util.leerInt();
-
-        // 3. Asignar el enunciado seleccionado a la convocatoria
-        controlador.asignarEnunciado(seleccionConvocatoria, enunciadoId);
     }
 
     private static void crearUnidad(ExamController controlador) {
@@ -180,14 +124,27 @@ public class Main {
 
     private static void crearConvocatoria(ExamController controlador) {
 
-        System.out.println("Introduce el el nombre de la convocatoria (Ordinaria o Extraordinaria):");
+        // Mostrar las convocatorias existentes
+        ArrayList<String> convocatoriasExistentes = controlador.convocatoriasExistente();
+        System.out.println("*** Convocatorias existentes ***");
+        System.out.println("");
+        for (String c : convocatoriasExistentes) {
+            System.out.println("- " + c);
+        }
+        System.out.println("");
+        System.out.println("Introduce el nombre de la convocatoria nueva que quieras añadir:");
         String convocatoria = Util.introducirCadena();
 
-        // Validar que la evaluación no esté vacía y sea una de las opciones válidas
-        while (convocatoria.isEmpty()) {
-            System.out.println("El nombre de la convocatoria no puede estar vacío.");
+        // Validar que la convocatoria no esté vacía y que no exista ya
+        while (convocatoria.isEmpty() || convocatoriasExistentes.contains(convocatoria)) {
+            if (convocatoria.isEmpty()) {
+                System.out.println("El nombre de la convocatoria no puede estar vacío.");
+            } else {
+                System.out.println("Ya existe una convocatoria con el nombre: " + convocatoria + ". Inténtalo de nuevo:");
+            }
             convocatoria = Util.introducirCadena();
         }
+
         System.out.println("Introduce la descripción de la convocatoria:");
         String descripcion = Util.introducirCadena();
         while (descripcion.isEmpty()) {
@@ -332,7 +289,44 @@ public class Main {
 
     }
 
-    private static void cvisualizarDocEnunciado(ExamController controlador) {
+    private static void consultarConvocatoria(ExamController controlador) {
+        // Consultar la lista de enunciados disponibles
+        ArrayList<Enunciado> enunciadosDisponibles = controlador.mostrarEnunciados();
+
+        // Verificar si hay enunciados disponibles
+        if (enunciadosDisponibles.isEmpty()) {
+            System.out.println("No hay enunciados disponibles actualmente.");
+        } else {
+            System.out.println("\t\tENUNCIADOS DISPONIBLES:");
+            // Mostrar el ID y el nombre de cada enunciado
+            enunciadosDisponibles.forEach((enunciado) -> {
+                System.out.println("ID: " + enunciado.getId()
+                        + "\nNOMBRE: " + enunciado.getDescripcion());
+            });
+
+            // Solicitar al usuario que introduzca el ID de un enunciado
+            System.out.println("Introduce el ID del enunciado para consultar sus convocatorias:");
+            int enunciadoId = Util.leerInt();
+
+            // Llamar al método consultarConvocatoria con el ID seleccionado
+            ArrayList<Convocatoria> convocatorias = controlador.consultarConvocatoria(enunciadoId);
+
+            // Verificar si se encontraron convocatorias
+            if (convocatorias.isEmpty()) {
+                System.out.println("No se encontraron convocatorias para el enunciado con ID: " + enunciadoId);
+            } else {
+                System.out.println("Convocatorias encontradas:");
+                convocatorias.forEach((convocatoria) -> {
+                    System.out.println("Nombre: " + convocatoria.getConvocatoria()
+                            + ", Descripción: " + convocatoria.getDescripcion()
+                            + ", Fecha: " + convocatoria.getFecha()
+                            + ", Curso: " + convocatoria.getCurso());
+                });
+            }
+        }
+    }
+
+    private static void visualizarDocEnunciado(ExamController controlador) {
         int id;
         boolean encontrado = false;
         String filePath;
@@ -377,5 +371,40 @@ public class Main {
                 }
             }
         }
+    }
+
+    private static void asignarEnunciado(ExamController controlador) {
+        ArrayList<Convocatoria> convocatoriasSinEnunciado = controlador.obtenerConvocatoriasSinEnunciado();
+
+        if (convocatoriasSinEnunciado.isEmpty()) {
+            System.out.println("No hay convocatorias sin enunciado.");
+            return;
+        }
+
+        // 1. Mostrar las convocatorias al usuario
+        System.out.println("Selecciona el número de la convocatoria a la que quieres asignar un enunciado:");
+        for (int i = 0; i < convocatoriasSinEnunciado.size(); i++) {
+            System.out.println((i + 1) + ". " + convocatoriasSinEnunciado.get(i).getConvocatoria());
+        }
+        int seleccionConvocatoria = Util.leerInt(1, convocatoriasSinEnunciado.size());
+
+        // 2. Mostrar los enunciados disponibles al usuario
+        ArrayList<Enunciado> enunciadosDisponibles = controlador.obtenerEnunciadosDisponibles();
+
+        if (enunciadosDisponibles.isEmpty()) {
+            System.out.println("No hay enunciados disponibles para asignar.");
+            return;
+        }
+
+        System.out.println("Enunciados disponibles:");
+        for (Enunciado enunciado : enunciadosDisponibles) {
+            System.out.println("ID: " + enunciado.getId() + " - Descripción: " + enunciado.getDescripcion());
+        }
+
+        System.out.println("Introduce el ID del enunciado que deseas asignar:");
+        int enunciadoId = Util.leerInt();
+
+        // 3. Asignar el enunciado seleccionado a la convocatoria
+        controlador.asignarEnunciado(seleccionConvocatoria, enunciadoId);
     }
 }

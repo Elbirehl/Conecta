@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author 2dam
+ * @author Irati, Meylin, Elbire y Olaia
  */
 public class Enunciado {
 
@@ -168,4 +168,6 @@ public class Enunciado {
     public void setConvocatorias(ArrayList<Convocatoria> convocatorias) {
         this.convocatorias = convocatorias;
     }
+
+   
 }
