@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author 2dam
+ * @author Irati, Meylin, Elbire y Olaia
  */
 public class UnidadDidactica {
 

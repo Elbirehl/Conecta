@@ -9,7 +9,7 @@ import utilidades.Util;
 
 /**
  *
- * @author 2dam
+ * @author Irati, Meylin, Elbire y Olaia
  */
 public enum Dificultad {
     ALTA, MEDIA, BAJA;

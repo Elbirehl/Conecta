@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author 2dam
+ * @author Irati, Meylin, Elbire y Olaia
  */
 public class DBConnection {
 
