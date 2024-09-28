@@ -209,12 +209,39 @@ public class Main {
         // Selección de Unidades Didácticas
         System.out.println("Selecciona las Unidades Didácticas para el enunciado.");
         do {
-            UnidadDidactica unidad = controlador.mostrarUnidadDidactica();
-            if (unidad != null) {
-                unidades.add(unidad); // Añade la unidad seleccionada a la lista
+            System.out.println("Lista de Unidades Didácticas:");
+            ArrayList<String> listaUnidades = controlador.obtenerListaUnidadDidactica();
+            for (String unidad : listaUnidades) {
+                System.out.println(unidad); // Imprimir la lista de unidades
             }
+
+            // Solicitar al usuario que seleccione el ID de la Unidad Didáctica
+            System.out.println("Introduce el ID de la Unidad Didáctica que quieres seleccionar:");
+            int idSeleccionado = Integer.parseInt(Util.introducirCadena());
+
+            // Seleccionar la unidad utilizando el método seleccionarUnidadDidactica
+            UnidadDidactica unidadSeleccionada = controlador.seleccionarUnidadDidactica(idSeleccionado);
+            if (unidadSeleccionada != null) {
+                boolean existe = false; // Variable para comprobar si ya existe la unidad
+
+                // Comprobar si la unidad ya está en la lista
+                for (UnidadDidactica unidad : unidades) {
+                    if (unidad.getId() == unidadSeleccionada.getId()) { // Comparar por ID
+                        existe = true; // Marca que la unidad ya existe
+                    }
+                }
+
+                // Añadir la unidad solo si no existe en la lista
+                if (!existe) {
+                    unidades.add(unidadSeleccionada); // Añade la unidad seleccionada a la lista
+                } else {
+                    System.out.println("¡Error! La Unidad Didáctica ya está añadida.");
+                }
+            }
+
             System.out.println("¿Quieres añadir otra Unidad Didáctica? (Si/No):");
             String otraUnidad = Util.introducirCadena();
+
             // Validación de la entrada
             while (!otraUnidad.equalsIgnoreCase("no") && !otraUnidad.equalsIgnoreCase("si")) {
                 System.out.println("¡ERROR! Introduce una opción válida.");
@@ -231,10 +258,35 @@ public class Main {
         // Selección de Convocatorias
         System.out.println("Selecciona las Convocatorias para el enunciado.");
         do {
-            Convocatoria convocatoria = controlador.consultarConvocatoriaDB();
-            if (convocatoria != null) {
-                convocatorias.add(convocatoria); // Añade la convocatoria seleccionada a la lista
+            ArrayList<String> listaConvocatorias = controlador.obtenerListaConvocatorias();
+
+            System.out.println("Introduce el número de la Convocatoria que quieres seleccionar:");
+            int seleccion = Util.leerInt(); // Leer la selección del usuario
+
+            // Validación de la selección
+            if (seleccion < 1 || seleccion > listaConvocatorias.size()) {
+                System.out.println("¡Error! Selección inválida.");
+                continue; // Volver a solicitar selección
             }
+
+            Convocatoria convocatoria = controlador.seleccionarConvocatoria(seleccion);
+            if (convocatoria != null) {
+                boolean yaExisten = false;
+                for (Convocatoria c : convocatorias) {
+                    if (c.getConvocatoria().equals(convocatoria.getConvocatoria())) {
+                        yaExisten = true; // La convocatoria ya está en la lista
+                        break;
+                    }
+                }
+
+                if (!yaExisten) {
+                    convocatorias.add(convocatoria); // Añade la convocatoria seleccionada a la lista
+                    System.out.println("Convocatoria añadida: " + convocatoria.getConvocatoria());
+                } else {
+                    System.out.println("¡Error! Esta convocatoria ya ha sido añadida.");
+                }
+            }
+
             System.out.println("¿Quieres añadir otra Convocatoria? (Si/No):");
             String otraConvocatoria = Util.introducirCadena();
 

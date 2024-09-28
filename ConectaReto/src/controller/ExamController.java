@@ -459,34 +459,32 @@ public class ExamController implements ManageExams {
     }
 
     //METODOS EXTRA DE ELBIRE
-    public UnidadDidactica mostrarUnidadDidactica() {
-
-        UnidadDidactica unidadSeleccionada = null;
-
-        // Intentar abrir conexión con la base de datos
+    public ArrayList<String> obtenerListaUnidadDidactica() {
+        ArrayList<String> listaUnidades = new ArrayList<>();
         try {
             con = conController.openConnection();
-            // 1. Obtener lista de Unidades Didácticas
             PreparedStatement ps = con.prepareStatement(LISTARUDESPECIFICA);
             rs = ps.executeQuery();
-            // 2. Mostrar la lista de Unidades Didácticas disponibles
-            System.out.println("Lista de Unidades Didácticas:");
+
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String acronimo = rs.getString("acronimo");
-                System.out.println(id + ": " + acronimo); // Mostrar ID y acrónimo
+                listaUnidades.add(id + ": " + acronimo);  // Agregamos los datos a la lista
             }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return listaUnidades;
+    }
 
-            // 3. Solicitar al usuario que introduzca el ID de la Unidad Didáctica deseada
-            System.out.println("Introduce el ID de la Unidad Didáctica que quieres seleccionar:");
-            int idSeleccionado = Integer.parseInt(Util.introducirCadena()); // Convertir la entrada del usuario a entero
-
-            // 4. Obtener detalles de la Unidad Didáctica seleccionada
+    public UnidadDidactica seleccionarUnidadDidactica(int idSeleccionado) {
+        UnidadDidactica unidadSeleccionada = null;
+        try {
+            con = conController.openConnection();
             PreparedStatement psDetalle = con.prepareStatement(OBTENERUDESPECIFICA);
             psDetalle.setInt(1, idSeleccionado);
             ResultSet rsDetalle = psDetalle.executeQuery();
 
-            // 5. Si la Unidad Didáctica existe, crear el objeto UnidadDidactica
             if (rsDetalle.next()) {
                 String acronimo = rsDetalle.getString("acronimo");
                 String titulo = rsDetalle.getString("titulo");
@@ -494,66 +492,53 @@ public class ExamController implements ManageExams {
                 String descripcion = rsDetalle.getString("descripcion");
                 ArrayList<Enunciado> enunciados = new ArrayList<>();
                 unidadSeleccionada = new UnidadDidactica(idSeleccionado, acronimo, titulo, evaluacion, descripcion, enunciados);
-            } else {
-                System.out.println("¡Error! Unidad Didáctica no encontrada.");
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return unidadSeleccionada;
     }
 
-    public Convocatoria consultarConvocatoriaDB() {
-
-        Convocatoria convocatoriaSeleccionada = null;
-
-        // Intentar abrir conexión con la base de datos
+    public ArrayList<String> obtenerListaConvocatorias() {
+        ArrayList<String> listaConvocatorias = new ArrayList<>();
         try {
-
             con = conController.openConnection();
-            // 1. Consultar la lista de Convocatorias
             PreparedStatement ps = con.prepareStatement(LISTARCONVOCATORIASTRING);
             rs = ps.executeQuery();
-            ArrayList<String> convocatorias = new ArrayList<>();
-            System.out.println("Lista de Convocatorias:");
 
-            // 2. Mostrar la lista de Convocatorias disponibles
             int index = 1;
+            // Agregar convocatorias a la lista
             while (rs.next()) {
                 String convocatoria = rs.getString("convocatoria");
-                convocatorias.add(convocatoria);
+                listaConvocatorias.add(convocatoria);
                 System.out.println(index + ". " + convocatoria); // Mostrar número y convocatoria
                 index++;
             }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return listaConvocatorias;
+    }
 
-            // 3. Solicitar al usuario que seleccione una convocatoria por número
-            System.out.println("Introduce el número de la Convocatoria que quieres seleccionar:");
-            int seleccion = Util.leerInt(); // Leer la selección del usuario
+    public Convocatoria seleccionarConvocatoria(int seleccion) {
+        Convocatoria convocatoriaSeleccionada = null;
 
-            // 4. Validar la selección del usuario
-            if (seleccion < 1 || seleccion > convocatorias.size()) {
-                System.out.println("¡Error! Selección inválida.");
-                return null;
-            }
-
-            // 5. Obtener la convocatoria seleccionada por el usuario
-            String convocatoriaSeleccionadaStr = convocatorias.get(seleccion - 1);
-
-            // 6. Consultar los detalles de la convocatoria seleccionada
+        try {
+            con = conController.openConnection();
             String detalleQuery = "SELECT * FROM ConvocatoriaExamen WHERE convocatoria = ?";
-            PreparedStatement psDetalle = con.prepareStatement(DETALLESCONVOCATORIA);
-            psDetalle.setString(1, convocatoriaSeleccionadaStr);
+            PreparedStatement psDetalle = con.prepareStatement(detalleQuery);
+            psDetalle.setString(1, obtenerListaConvocatorias().get(seleccion - 1)); // Obtener la convocatoria seleccionada
             ResultSet rsDetalle = psDetalle.executeQuery();
 
-            // 7. Si la convocatoria existe, crear el objeto Convocatoria
+            // Si la convocatoria existe, crear el objeto Convocatoria
             if (rsDetalle.next()) {
+                String convocatoria = rsDetalle.getString("convocatoria");
                 String descripcion = rsDetalle.getString("descripcion");
                 LocalDate fecha = rsDetalle.getDate("fecha").toLocalDate();
                 String curso = rsDetalle.getString("curso");
                 int enunciadoId = rsDetalle.getInt("enunciado_id");
-                Enunciado enunciado = null;
-                convocatoriaSeleccionada = new Convocatoria(convocatoriaSeleccionadaStr, descripcion, fecha, curso, enunciado);
+                Enunciado enunciado = null; // Suponiendo que manejas el enunciado más adelante
+                convocatoriaSeleccionada = new Convocatoria(convocatoria, descripcion, fecha, curso, enunciado);
             } else {
                 System.out.println("¡Error! Convocatoria no encontrada.");
             }
